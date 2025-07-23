@@ -1,0 +1,67 @@
+name: Build & Release macOS (arm64 & x86_64 DMG)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-x86_64:
+    runs-on: macos-13
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Build for x86_64
+        run: |
+          xcodebuild -project MLauncher.xcodeproj \
+            -scheme MLauncher \
+            -configuration Release \
+            -arch x86_64 \
+            -derivedDataPath build-x86_64 \
+            build
+
+      - name: Create DMG (x86_64)
+        run: |
+          APP_PATH=$(find build-x86_64/Build/Products/Release -name 'MLauncher.app' -type d | head -n 1)
+          create-dmg --overwrite --dmg-title="MLauncher-x86_64" --volname="MLauncher-x86_64" --window-pos 200 120 --window-size 800 400 --icon-size 100 --app-drop-link 600 185 --icon "MLauncher.app" 200 185 MLauncher-macOS-x86_64.dmg "$APP_PATH"
+
+      - name: Upload x86_64 DMG to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: MLauncher-macOS-x86_64.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-arm64:
+    runs-on: macos-13
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Build for arm64 (Rosetta)
+        run: |
+          xcodebuild -project MLauncher.xcodeproj \
+            -scheme MLauncher \
+            -configuration Release \
+            -arch arm64 \
+            -derivedDataPath build-arm64 \
+            build
+
+      - name: Create DMG (arm64)
+        run: |
+          APP_PATH=$(find build-arm64/Build/Products/Release -name 'MLauncher.app' -type d | head -n 1)
+          create-dmg --overwrite --dmg-title="MLauncher-arm64" --volname="MLauncher-arm64" --window-pos 200 120 --window-size 800 400 --icon-size 100 --app-drop-link 600 185 --icon "MLauncher.app" 200 185 MLauncher-macOS-arm64.dmg "$APP_PATH"
+
+      - name: Upload arm64 DMG to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: MLauncher-macOS-arm64.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
