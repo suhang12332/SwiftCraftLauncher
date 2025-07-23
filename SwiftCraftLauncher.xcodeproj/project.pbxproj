@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9023D91C2E313A67005A53F1 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 9023D91B2E313A67005A53F1 /* ZIPFoundation */; };
+		9023D91F2E313A9C005A53F1 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9023D91E2E313A9C005A53F1 /* MarkdownUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		9023D8312E3139B5005A53F1 /* SwiftCraftLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftCraftLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9023D8312E3139B5005A53F1 /* SwiftCraftLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = SwiftCraftLauncher.app; path = /Users/su/Development/XCodeProjects/SwiftCraftLauncher/build/Debug/SwiftCraftLauncher.app; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9023D91C2E313A67005A53F1 /* ZIPFoundation in Frameworks */,
+				9023D91F2E313A9C005A53F1 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,16 +40,7 @@
 			isa = PBXGroup;
 			children = (
 				9023D8332E3139B5005A53F1 /* SwiftCraftLauncher */,
-				9023D8322E3139B5005A53F1 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		9023D8322E3139B5005A53F1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				9023D8312E3139B5005A53F1 /* SwiftCraftLauncher.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -65,6 +63,8 @@
 			);
 			name = SwiftCraftLauncher;
 			packageProductDependencies = (
+				9023D91B2E313A67005A53F1 /* ZIPFoundation */,
+				9023D91E2E313A9C005A53F1 /* MarkdownUI */,
 			);
 			productName = SwiftCraftLauncher;
 			productReference = 9023D8312E3139B5005A53F1 /* SwiftCraftLauncher.app */;
@@ -94,8 +94,12 @@
 			);
 			mainGroup = 9023D8282E3139B5005A53F1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9023D91A2E313A67005A53F1 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				9023D91D2E313A9C005A53F1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 9023D8322E3139B5005A53F1 /* Products */;
+			productRefGroup = 9023D8282E3139B5005A53F1;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -315,6 +319,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9023D91A2E313A67005A53F1 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
+		9023D91D2E313A9C005A53F1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9023D91B2E313A67005A53F1 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9023D91A2E313A67005A53F1 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+		9023D91E2E313A9C005A53F1 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9023D91D2E313A9C005A53F1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9023D8292E3139B5005A53F1 /* Project object */;
 }

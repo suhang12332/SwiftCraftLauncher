@@ -1,0 +1,334 @@
+"common.cancel" = "取消";
+"common.confirm" = "确认";
+
+// Player Errors
+"error.invalid_username" = "无效的用户名";
+"error.encoding" = "字符串编码错误";
+"error.uuid_generation" = "UUID生成失败";
+
+// Time Format
+"time.hours_minutes" = "%d小时%d分钟";
+
+"addgame" = "添加游戏";
+
+// Player Status
+"player.status.playing" = "正在游玩";
+"player.status.last_played" = "最后游玩：%@";
+
+// Sidebar Navigation
+"sidebar.games" = "游戏";
+"sidebar.resources" = "资源";
+"sidebar.select_item" = "请选择项目";
+"app.name" = "MLauncher";
+"app.version" = "版本 %@";
+
+// Resource Types
+"resource.mod" = "模组";
+"resource.datapack" = "数据包";
+"resource.shader" = "光影";
+"resource.resourcepack" = "资源包";
+"resource.modpack" = "整合包";
+
+
+// Game Sidebar
+"game.sidebar.title" = "游戏信息";
+
+// 侧边栏
+
+"sidebar.resources.title" = "资源列表";
+"sidebar.games.title" = "游戏列表";
+"sidebar.search.games" = "搜索游戏";
+
+// 游戏内容
+"game.content.title" = "游戏内容";
+"game.content.version" = "版本";
+"game.content.last_played" = "上次游玩";
+"game.content.play_time" = "游戏时长";
+"game.content.play_button" = "开始游戏";
+"game.content.settings_button" = "游戏设置";
+
+// 资源内容
+"resource.content.title" = "资源内容";
+"resource.content.type.mod" = "模组";
+"resource.content.type.datapack" = "数据包";
+"resource.content.type.shader" = "光影";
+"resource.content.type.resourcepack" = "资源包";
+"resource.content.type.modpack" = "整合包";
+"resource.content.type.server" = "资源库";
+"resource.content.type.local" = "已安装";
+
+// 语言选择
+"language.zh-Hans" = "简体中文";
+"language.zh-Hant" = "繁體中文";
+"language.en" = "English";
+
+// 设置
+"settings.language.title" = "语言设置";
+"settings.language.picker" = "选择语言";
+"settings.general.tab" = "通用";
+"settings.player.tab" = "玩家";
+"settings.game.tab" = "游戏";
+"settings.minecraft_versions_url.label" = "Minecraft 版本资源地址";
+"settings.modrinth_api_url.label" = "Modrinth API 地址";
+"settings.default_java_path.label" = "默认 Java 路径";
+"settings.default_memory_allocation.label" = "全局内存分配";
+"settings.concurrent_downloads.label" = "下载并发数";
+"settings.auto_download_dependencies.label" = "自动下载前置Mod（依赖）";
+"settings.git_proxy_url.label" = "Git 代理地址";
+
+// Settings - Titles and Placeholders
+"settings.general.title" = "通用";
+"settings.player.title" = "玩家";
+"settings.game.title" = "游戏";
+
+"settings.player.placeholder" = "玩家设置将显示在此处。";
+
+// Alert - Add Player
+"alert.add_player.title" = "添加玩家";
+"alert.add_player.message" = "请输入玩家名称，注意：玩家名称必须唯一，已存在的玩家名称将无法添加";
+"alert.add_player.placeholder" = "玩家名称";
+"alert.button.cancel" = "取消";
+"alert.button.add" = "添加"; 
+
+
+// Common
+"result.empty" = "查询结果为空";
+"result.error" = "😩查询错误，请稍后再试!";
+
+// toolbar
+"menu.sort" = "排序";
+"menu.sort.relevance" = "相关度";
+"menu.sort.downloads" = "下载量";
+"menu.sort.follows" = "关注数";
+"menu.sort.newest" = "最新";
+"menu.sort.updated" = "最近更新";
+
+"player.add" = "添加玩家";
+"player.remove" = "移除玩家";
+"player.remove.confirm" = "确定要移除 %@ 吗？";
+
+// Filter
+"filter.version.icon" = "🎮游戏版本";
+"filter.version" = "游戏版本";
+"filter.category" = "分类";
+"filter.environment" = "环境";
+"filter.loader" = "加载器";
+"filter.behavior" = "行为";
+"filter.performance" = "性能要求";
+"filter.resolutions" = "分辨率";
+"category.loading" = "正在加载%@...";
+
+// Environment
+"environment.client" = "客户端";
+"environment.server" = "服务端"; 
+
+// Platform Support
+"platform.client.required" = "必需";
+"platform.server.required" = "必需";
+"platform.client.optional" = "可选";
+"platform.server.optional" = "可选";
+"platform.client.unsupported" = "不支持";
+"platform.server.unsupported" = "不支持";
+"platform.support" = "平台支持";
+
+// Game Versions
+"game.versions.title" = "版本";
+"game.versions.numeric" = "数字版本";
+"game.versions.all" = "所有版本";
+"game.versions.filter" = "过滤版本";
+
+// Project Info Sections
+"project.info.compatibility" = "兼容性";
+"project.info.minecraft" = "Minecraft：";
+"project.info.minecraft.edition" = "Java 版";
+"project.info.versions" = "版本：";
+"project.info.platforms" = "Mod 加载器：";
+"project.info.environments" = "支持环境";
+"project.info.environments.client" = "客户端：";
+"project.info.environments.server" = "服务端：";
+"project.info.links" = "链接";
+"project.info.links.issues" = "报告问题";
+"project.info.links.source" = "查看源码";
+"project.info.links.wiki" = "访问维基";
+"project.info.links.discord" = "加入 Discord";
+"project.info.links.donate" = "捐赠";
+"project.info.creators" = "创作者";
+"project.info.creators.moderator" = "社区管理员";
+"project.info.creators.owner" = "所有者";
+"project.info.details" = "详情";
+"project.info.details.licensed" = "许可证";
+"project.info.details.published" = "发布时间";
+"project.info.details.updated" = "更新时间";
+
+// 主题设置
+"settings.theme.title" = "主题设置";
+"settings.theme.picker" = "选择主题";
+"settings.theme.system" = "跟随系统";
+"settings.theme.light" = "浅色";
+"settings.theme.dark" = "深色"; 
+
+// Version table columns
+"versions.name" = "版本";
+"versions.game_versions" = "游戏版本";
+"versions.loaders" = "加载器";
+"versions.type" = "类型";
+"versions.downloads" = "下载量";
+"versions.date" = "发布日期";
+"versions.loading" = "正在加载版本信息...";
+"versions.platforms" = "平台";
+"versions.operate" = "操作";
+
+// Game Form
+"game.form.title" = "添加游戏";
+"game.form.icon" = "游戏图标";
+"game.form.icon.description" = "为游戏选择图标";
+"game.form.name" = "游戏名称";
+"game.form.name.placeholder" = "请输入游戏名称";
+"game.form.version" = "游戏版本";
+"game.form.modloader" = "mod加载器";
+"game.form.save.error" = "保存游戏信息失败";
+
+// Download Progress
+"download.core.title" = "核心文件";
+"download.resources.title" = "资源文件";
+"download.progress" = "进度：%d%%";
+"download.current.file" = "当前文件：%@";
+"download.files" = "文件：%d/%d";
+
+// Notification
+"notification.download.complete.title" = "下载完成";
+"notification.download.complete.body" = "%@ (版本: %@, 加载器: %@) 已成功下载。";
+"notification.download.failed.title" = "下载失败";
+"notification.download.failed.body" = "%@ (版本: %@, 加载器: %@) 下载失败: %@";
+
+// File Names
+"file.client.jar" = "客户端文件";
+"file.library" = "库文件：%@";
+"file.native" = "原生库：%@";
+"file.asset.index" = "资源索引";
+"file.logging.config" = "日志配置";
+"file.asset" = "资源文件：%@";
+
+"delete.title" = "删除游戏版本";
+"delete.game.confirm" = "确定要删除游戏“%@”及其所有数据吗？(真的很久)";
+"resource.delete.confirm" = "确定要删除“%@”吗？删除可能会导致游戏启动失败";
+"game.not_found" = "未找到游戏";
+
+"sidebar.alert.no_player.title" = "没有玩家";
+"sidebar.alert.no_player.message" = "没有玩家信息，先添加玩家信息后，才可以添加游戏";
+
+"fabric.loader.title" = "Fabric 加载器";
+
+"resource.add" = "添加";
+"resource.installed" = "已安装";
+"common.delete" = "删除";
+
+"pagination.current" = "第 %d 页";
+"pagination.total" = "共 %d 页";
+
+"error.no.file.selected" = "未选择文件";
+"error.image.pick.failed" = "图片选择失败";
+"error.image.access.failed" = "图片访问失败";
+"error.image.read.failed" = "无法读取图片文件";
+"error.image.load.drag.failed" = "加载拖拽图片失败";
+"error.no.current.player.log" = "无法保存游戏，因为没有选择当前玩家。";
+"error.forge.profile.fetch.failed" = "获取 Forge profile 失败";
+"error.fabric.profile.fetch.failed" = "获取 Fabric profile 失败";
+"error.version.data.load.failed" = "加载版本数据失败";
+"error.forge.network.failed" = "网络请求失败：%@";
+"error.forge.invalid.response" = "响应格式错误";
+"error.forge.no.matching.version" = "未找到匹配的 Forge 版本";
+"error.forge.installer.download.failed" = "Forge 安装器下载失败";
+"error.forge.installer.extraction.failed" = "解压 installer.jar 失败";
+"error.forge.version.json.notfound" = "未找到 version.json";
+"error.forge.meta.libraries.notfound" = "meta/libraries 路径不存在";
+"log.minecraft.download.start" = "开始下载 Minecraft 版本：%@";
+"log.minecraft.download.complete" = "完成下载 Minecraft 版本文件：%@";
+"log.minecraft.download.assets.start" = "开始下载 Minecraft 版本资源：%@";
+"log.minecraft.download.assets.complete" = "完成下载 Minecraft 版本资源：%@";
+
+"dependency.required_mods.title" = "待下载的前置mod(必须)";
+"dependency.version.picker" = "选择版本:";
+"common.close" = "关闭";
+"dependency.download_all_and_continue" = "下载所有依赖并继续";
+"common.continue" = "继续";
+"dependency.download.success" = "成功";
+"dependency.download.retry" = "重试";
+"dependency.download.retry.help" = "重试下载";
+"dependency.download.main_resource.failed" = "主资源下载失败，请重试。";
+"error.image.create.failed" = "无法创建图片";
+"error.image.data.empty" = "图片数据为空";
+"error.image.size.large" = "图片尺寸过大";
+"error.image.size" = "图片尺寸错误";
+"error.no.current.player.title" = "没有选择当前玩家";
+"error.version.info.missing" = "缺少版本信息";
+"error.version.info.fetch" = "获取版本信息失败";
+"game.form.version.placeholder" = "请选择游戏版本";
+
+"forge.loader.title" = "Forge 加载器";
+
+"addplayer.title" = "创建离线账户";
+"addplayer.name.title" = "玩家名";
+"addplayer.name.placeholder" = "请输入玩家名将用作您在游戏中的显示名称";
+"addplayer.create" = "创建账户";
+
+"addplayer.info.offline.title" = "离线账户说明";
+"addplayer.info.offline.body" = "离线账户无需网络验证，可以在没有网络的情况下游戏。";
+"addplayer.info.rules.title" = "命名规则";
+"addplayer.info.rules.body" = "玩家名长度为1-16个字符，只能包含字母、数字和下划线。";
+"addplayer.info.limit.title" = "使用限制";
+"addplayer.info.limit.body" = "离线账户无法在正版服务器中使用，每个玩家名只能创建一个离线账户。";
+
+"addplayer.name.error.empty" = "玩家名不能为空";
+"addplayer.name.error.length" = "玩家名长度需为3-16个字符";
+"addplayer.name.error.charset" = "只能包含字母、数字和下划线";
+"addplayer.name.error.duplicate" = "该玩家名已存在";
+"addplayer.name.error.unknown" = "玩家名无效";
+
+
+// AddPlayerSheetView
+"addplayer.title" = "创建离线账户";
+"addplayer.create" = "创建账户";
+"addplayer.info.title" = "离线账户说明：";
+"addplayer.info.line1" = "• 离线账户无需网络验证，可以在没有网络的情况下游戏";
+"addplayer.info.line2" = "• 玩家名长度为1-16个字符，只能包含字母、数字和下划线";
+"addplayer.info.line3" = "• 离线账户无法在正版服务器中使用";
+"addplayer.info.line4" = "• 每个玩家名只能创建一个离线账户";
+"addplayer.name.label" = "玩家名";
+"addplayer.name.placeholder" = "请输入玩家名将用作您在游戏中的显示名称";
+"addplayer.name.error.empty" = "玩家名不能为空";
+"addplayer.name.error.duplicate" = "玩家名已存在";
+"addplayer.name.error.invalid" = "玩家名无效";
+
+"release.time.prefix" = "发布于: ";
+"global_resource.select_game" = "选择游戏";
+"global_resource.select_game.placeholder" = "请选择游戏";
+"global_resource.select_version" = "选择版本";
+"global_resource.dependency_version" = "依赖版本";
+"global_resource.download_all" = "全部下载";
+"global_resource.download" = "下载";
+"global_resource.download_main_only" = "只下载资源";
+"global_resource.add" = "添加资源";
+"global_resource.add_for_game" = "为%@添加资源";
+"global_resource.no_game_list" = "暂无可用的游戏列表";
+"global_resource.please_select_game" = "请选择游戏";
+"global_resource.no_version" = "无可用版本";
+"global_resource.no_version_available" = "暂无可用版本";
+"no_local_game.title" = "没有本地游戏";
+"no_local_game.message" = "请先添加本地游戏后再进行此操作。";
+
+/* NeoForge Errors */
+"error.neoforge.network.failed" = "NeoForge 网络错误: %@";
+"error.neoforge.invalid.response" = "NeoForge 响应无效";
+"error.neoforge.no.matching.version" = "NeoForge 没有匹配的版本";
+"error.neoforge.download.failed" = "NeoForge 安装包下载失败";
+"error.neoforge.extraction.failed" = "NeoForge 安装包解压失败";
+"error.neoforge.versionjson.notfound" = "NeoForge version.json 未找到";
+
+/* Quilt Errors */
+"error.quilt.network.failed" = "Quilt 网络错误: %@";
+"error.quilt.invalid.response" = "Quilt 响应无效";
+"error.quilt.no.matching.version" = "Quilt 没有匹配的版本";
+"error.quilt.download.failed" = "Quilt 安装包下载失败";
+"error.quilt.extraction.failed" = "Quilt 安装包解压失败";
+"error.quilt.versionjson.notfound" = "Quilt version.json 未找到"; 

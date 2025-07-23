@@ -1,0 +1,270 @@
+// Player Errors
+"error.invalid_username" = "Invalid username";
+"error.encoding" = "String encoding error";
+"error.uuid_generation" = "UUID generation failed";
+
+// Time Format
+"time.hours_minutes" = "%d hours %d minutes";
+
+// Player Status
+"player.status.playing" = "Playing";
+"player.status.last_played" = "Last played: %@";
+
+// General
+"app.name" = "MLauncher";
+"app.version" = "Version %@";
+
+// Sidebar
+"sidebar.title" = "MLauncher";
+"sidebar.select_item" = "Please select an item";
+"sidebar.resources.title" = "Resources";
+"sidebar.games.title" = "Games";
+
+// Detail View
+"detail.title" = "Details";
+"detail.select_item" = "Please select an item from the left";
+
+// Game Content
+"game.content.title" = "Game Content";
+"game.content.version" = "Version";
+"game.content.last_played" = "Last Played";
+"game.content.play_time" = "Play Time";
+"game.content.play_button" = "Play";
+"game.content.settings_button" = "Settings";
+
+// Resource Content
+"resource.content.title" = "Resource Content";
+"resource.content.type.mod" = "Mods";
+"resource.content.type.datapack" = "Data Packs";
+"resource.content.type.shader" = "Shaders";
+"resource.content.type.resourcepack" = "Resource Packs";
+"resource.content.type.modpack" = "Modpacks";
+"resource.content.type.server" = "Server";
+"resource.content.type.local" = "Installed";
+
+// Language Selection
+"language.zh-Hans" = "简体中文";
+"language.zh-Hant" = "繁體中文";
+"language.en" = "English";
+
+// Settings
+"settings.language.title" = "Language Settings";
+"settings.language.picker" = "Select Language";
+"settings.general.tab" = "General";
+"settings.player.tab" = "Player";
+"settings.game.tab" = "Game";
+"settings.minecraft_versions_url.label" = "Minecraft Versions URL";
+"settings.modrinth_api_url.label" = "Modrinth API URL";
+"settings.default_java_path.label" = "Default Java Path";
+"settings.default_memory_allocation.label" = "Default Memory Allocation";
+"settings.concurrent_downloads.label" = "Concurrent Downloads";
+"settings.auto_download_dependencies.label" = "Auto download dependencies (mods required by other mods)";
+"settings.git_proxy_url.label" = "Git Proxy URL";
+
+// Settings - Titles and Placeholders
+"settings.general.title" = "General";
+"settings.player.title" = "Player";
+"settings.game.title" = "Game";
+"settings.minecraft_versions_url.placeholder" = "Enter Minecraft Versions URL";
+"settings.modrinth_api_url.placeholder" = "Enter Modrinth API URL";
+"settings.default_java_path.placeholder" = "Enter Default Java Path";
+"settings.player.placeholder" = "Player settings will go here.";
+
+// Sidebar Alerts
+"sidebar.alert.no_player.title" = "No Player Selected";
+"sidebar.alert.no_player.message" = "Please create or select a player before adding a new game.";
+
+// Theme Settings
+"settings.theme.title" = "Theme Settings";
+"settings.theme.picker" = "Select Theme";
+"settings.theme.system" = "System";
+"settings.theme.light" = "Light";
+"settings.theme.dark" = "Dark";
+
+// Version table columns
+"versions.name" = "Version";
+"versions.game_versions" = "Game Versions";
+"versions.loaders" = "Loaders";
+"versions.type" = "Type";
+"versions.downloads" = "Downloads";
+"versions.date" = "Published";
+"versions.loading" = "Loading versions...";
+"versions.platforms" = "Platforms"; 
+"versions.operate" = "Operate";
+
+// Game Versions
+"game.versions.title" = "Versions";
+"game.versions.numeric" = "Numeric Version";
+"game.versions.all" = "All Versions";
+"game.versions.filter" = "Filter Versions";
+
+// Project Info
+"project.info.compatibility" = "Compatibility";
+"project.info.minecraft" = "Minecraft:";
+"project.info.minecraft.edition" = "Java Edition";
+"project.info.versions" = "Versions:";
+"project.info.platforms" = "Mod Loaders:";
+"project.info.environments" = "Supported Environments";
+"project.info.environments.client" = "Client:";
+"project.info.environments.server" = "Server:";
+"project.info.links" = "Links";
+"project.info.links.issues" = "Report Issue";
+"project.info.links.source" = "Source Code";
+"project.info.links.wiki" = "Wiki";
+"project.info.links.discord" = "Join Discord";
+"project.info.links.donate" = "Donate";
+"project.info.creators" = "Creators";
+"project.info.creators.moderator" = "Moderator";
+"project.info.creators.owner" = "Owner";
+"project.info.details" = "Details";
+"project.info.details.licensed" = "License";
+"project.info.details.published" = "Published";
+"project.info.details.updated" = "Updated";
+
+// Game Form
+"game.form.title" = "Add Game";
+"game.form.icon" = "Game Icon";
+"game.form.icon.description" = "Choose an icon for the game";
+"game.form.name" = "Game Name";
+"game.form.name.placeholder" = "Enter game name";
+"game.form.version" = "Game Version";
+"game.form.modloader" = "Mod Loader";
+"game.form.save.error" = "Failed to save game info";
+
+// Download
+"download.core.title" = "Core Files";
+"download.resources.title" = "Resource Files";
+"download.progress" = "Progress: %d%%";
+"download.current.file" = "Current file: %@";
+"download.files" = "Files: %d/%d";
+
+// Notification
+"notification.download.complete.title" = "Download Complete";
+"notification.download.complete.body" = "%@ (Version: %@, Loader: %@) downloaded successfully.";
+"notification.download.failed.title" = "Download Failed";
+"notification.download.failed.body" = "%@ (Version: %@, Loader: %@) download failed: %@";
+
+// Common
+"common.cancel" = "Cancel";
+"common.confirm" = "Confirm";
+"addgame" = "Add Game";
+"sidebar.games" = "Games";
+"sidebar.resources" = "Resources";
+"resource.mod" = "Mod";
+"resource.datapack" = "Datapack";
+"resource.shader" = "Shader";
+"resource.resourcepack" = "Resource Pack";
+"resource.modpack" = "Modpack";
+"resource.add" = "+ Add";
+"resource.installed" = "Installed";
+"common.delete" = "Delete";
+
+// Alert
+"alert.add_player.title" = "Add Player";
+"alert.add_player.message" = "Please enter player name. Note: Player name must be unique.";
+"alert.add_player.placeholder" = "Player Name";
+"alert.button.cancel" = "Cancel";
+"alert.button.add" = "Add";
+"result.empty" = "No results found";
+"result.error" = "Query error, please try again later!";
+"menu.sort" = "Sort";
+"menu.sort.relevance" = "Relevance";
+"menu.sort.downloads" = "Downloads";
+"menu.sort.follows" = "Follows";
+"menu.sort.newest" = "Newest";
+"menu.sort.updated" = "Updated";
+"player.add" = "Add Player";
+"filter.version.icon" = "Game Version";
+"filter.version" = "Game Version";
+"filter.category" = "Category";
+"filter.environment" = "Environment";
+"filter.loader" = "Loader";
+"filter.behavior" = "Behavior";
+"filter.performance" = "Performance";
+"filter.resolutions" = "Resolution";
+"category.loading" = "Loading %@...";
+"environment.client" = "Client";
+"environment.server" = "Server";
+"platform.client.required" = "Required";
+"platform.server.required" = "Required";
+"platform.client.optional" = "Optional";
+"platform.server.optional" = "Optional";
+"platform.client.unsupported" = "Unsupported";
+"platform.server.unsupported" = "Unsupported";
+"platform.support" = "Platform Support"; 
+"resource.delete.confirm" = "Are you sure you want to delete resource \"%@\"?"; 
+"error.no.file.selected" = "No file selected";
+"error.image.pick.failed" = "Image selection failed";
+"error.image.access.failed" = "Image access failed";
+"error.image.read.failed" = "Failed to read image file";
+"error.image.load.drag.failed" = "Failed to load dragged image";
+"error.no.current.player.log" = "Failed to save game because no player is selected.";
+"error.forge.profile.fetch.failed" = "Failed to fetch Forge profile";
+"error.fabric.profile.fetch.failed" = "Failed to fetch Fabric profile";
+"error.version.data.load.failed" = "Failed to load version data";
+"error.forge.network.failed" = "Network request failed: %@";
+"error.forge.invalid.response" = "Invalid response format";
+"error.forge.no.matching.version" = "No matching Forge version found";
+"error.forge.installer.download.failed" = "Forge installer download failed";
+"error.forge.installer.extraction.failed" = "Failed to extract installer.jar";
+"error.forge.version.json.notfound" = "version.json not found";
+"error.forge.meta.libraries.notfound" = "meta/libraries path does not exist";
+"log.minecraft.download.start" = "Start downloading Minecraft version: %@";
+"log.minecraft.download.complete" = "Completed downloading Minecraft version file: %@";
+"log.minecraft.download.assets.start" = "Start downloading Minecraft version assets: %@";
+"log.minecraft.download.assets.complete" = "Completed downloading Minecraft version assets: %@"; 
+"dependency.required_mods.title" = "Required dependencies to download";
+"dependency.version.picker" = "Select version:";
+"common.close" = "Close";
+"dependency.download_all_and_continue" = "Download all dependencies and continue";
+"common.continue" = "Continue";
+"dependency.download.success" = "Success";
+"dependency.download.retry" = "Retry";
+"dependency.download.retry.help" = "Retry download";
+"dependency.download.main_resource.failed" = "Main resource download failed, please try again."; 
+"error.image.create.failed" = "Failed to create image";
+"error.image.data.empty" = "Image data is empty";
+"error.image.size.large" = "Image size is too large";
+"error.image.size" = "Image size error";
+"error.no.current.player.title" = "No player selected";
+"error.version.info.missing" = "Version info missing";
+"error.version.info.fetch" = "Failed to fetch version info";
+"file.client.jar" = "Client file";
+"file.library" = "Library file: %@";
+"file.native" = "Native library: %@";
+"file.logging.config" = "Logging config";
+"file.asset" = "Asset file: %@";
+"delete.title" = "Delete";
+"delete.game.confirm" = "Are you sure you want to delete game \"%@\" and all its data?";
+"game.form.version.placeholder" = "Please select a game version"; 
+
+// AddPlayerSheetView
+"addplayer.title" = "Create Offline Account";
+"addplayer.create" = "Create Account";
+"addplayer.info.title" = "Offline Account Info:";
+"addplayer.info.line1" = "• Offline accounts do not require network authentication and can be used without internet.";
+"addplayer.info.line2" = "• Player name must be 1-16 characters, only letters, numbers, and underscores are allowed.";
+"addplayer.info.line3" = "• Offline accounts cannot be used on official servers.";
+"addplayer.info.line4" = "• Each player name can only have one offline account.";
+"addplayer.name.label" = "Player Name";
+"addplayer.name.placeholder" = "Please enter a player name to use as your in-game display name";
+"addplayer.name.error.empty" = "Player name cannot be empty";
+"addplayer.name.error.duplicate" = "Player name already exists";
+"addplayer.name.error.invalid" = "Invalid player name"; 
+
+"release.time.prefix" = "Released: ";
+"global_resource.select_game" = "Select Game";
+"global_resource.select_game.placeholder" = "Please select a game";
+"global_resource.select_version" = "Select Version";
+"global_resource.dependency_version" = "Dependency Version";
+"global_resource.download_all" = "Download All";
+"global_resource.download_main_only" = "Download Main Only";
+"global_resource.download" = "Download";
+"global_resource.add" = "Add Resource";
+"global_resource.add_for_game" = "Add Resource for %@";
+"global_resource.no_game_list" = "No compatible games found";
+"global_resource.please_select_game" = "Please select a game";
+"global_resource.no_version" = "No available version";
+"global_resource.no_version_available" = "No available version";
+"no_local_game.title" = "No Local Game";
+"no_local_game.message" = "Please add a local game before performing this operation.";
