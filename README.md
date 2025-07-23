@@ -4,7 +4,7 @@
 
 ## 🚀 简介
 
-MLauncher 是一个现代化的 macOS版的 Minecraft 启动器，为用户提供快速、高效的应用程序访问体验。通过简洁的界面和智能的搜索功能，让您的应用程序启动变得更加便捷。
+SwiftCraftLauncher 是一个现代化的 macOS版的 Minecraft 启动器，为用户提供快速、高效的应用程序访问体验。通过简洁的界面和智能的搜索功能，让您的应用程序启动变得更加便捷。
 
 ## ✨ 主要特性
 
@@ -55,20 +55,20 @@ let success = await ModrinthDependencyDownloader.downloadMainResourceOnly(
 
 1. 克隆仓库
 ```bash
-git clone https://github.com/yourusername/MLauncher.git
+git clone https://github.com/suhang12332/SwiftCraftLauncher.git
 ```
 
 2. 打开项目
 ```bash
-cd MLauncher
-open MLauncher.xcodeproj
+cd SwiftCraftLauncher
+open SwiftCraftLauncher.xcodeproj
 ```
 
 3. 在 Xcode 中构建并运行项目
 
 ## 📝 许可证
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
+本项目采用 GNU Affero General Public License v3.0 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
 
 ## 🤝 贡献
 
