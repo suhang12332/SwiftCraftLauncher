@@ -42,6 +42,7 @@ struct GameFormView: View {
     @FocusState private var isGameNameFocused: Bool
     @State private var availableModLoaders: [String] = []
     @State private var isGameNameDuplicate: Bool = false
+    @State private var pendingIconData: Data? = nil
 
     // MARK: - Body
     var body: some View {
@@ -118,14 +119,36 @@ struct GameFormView: View {
     
     private var iconContainer: some View {
         ZStack {
-            if let iconImage = iconImage {
-                iconImage
+            if let data = pendingIconData, let image = NSImage(data: data) {
+                Image(nsImage: image)
                     .resizable()
                     .interpolation(.none)
                     .scaledToFill()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
                     .contentShape(Rectangle())
+            } else if let iconURL = AppPaths.profileDirectory(gameName: gameName)?.appendingPathComponent(AppConstants.defaultGameIcon),
+                      FileManager.default.fileExists(atPath: iconURL.path) {
+                AsyncImage(url: iconURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .interpolation(.none)
+                            .scaledToFill()
+                            .frame(width: Constants.iconSize, height: Constants.iconSize)
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
+                            .contentShape(Rectangle())
+                    case .failure:
+                        RoundedRectangle(cornerRadius: Constants.cornerRadius)
+                            .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
+                            .background(Color.gray.opacity(0.08))
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
             } else {
                 RoundedRectangle(cornerRadius: Constants.cornerRadius)
                     .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
@@ -363,7 +386,6 @@ struct GameFormView: View {
                 )
                 return
             }
-
             guard url.startAccessingSecurityScopedResource() else {
                 handleNonCriticalError(
                     NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "无法访问所选文件"]),
@@ -371,18 +393,16 @@ struct GameFormView: View {
                 )
                 return
             }
-
             defer { url.stopAccessingSecurityScopedResource() }
-
             Task { @MainActor in
                 do {
                     let data = try Data(contentsOf: url)
-                    setIconImage(from: data)
+                    pendingIconData = data
+                    iconImage = nil // 让 iconContainer 走 AsyncImage 预览
                 } catch {
                     handleNonCriticalError(error, message: "error.image.read.failed".localized())
                 }
             }
-
         case .failure(let error):
             handleNonCriticalError(error, message: "error.image.pick.failed".localized())
         }
@@ -405,7 +425,8 @@ struct GameFormView: View {
 
                 if let data = data {
                     DispatchQueue.main.async {
-                        setIconImage(from: data)
+                        pendingIconData = data
+                        iconImage = nil // 让预览刷新
                     }
                 }
             }
@@ -415,40 +436,15 @@ struct GameFormView: View {
         return false
     }
 
+    // setIconImage(from:) 只保留空实现或移除
     private func setIconImage(from data: Data) {
-        guard let nsImage = NSImage(data: data) else {
-            handleNonCriticalError(
-                NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "无法创建图片"]),
-                message: "error.image.create.failed".localized()
-            )
-            return
-        }
-
-        guard !data.isEmpty else {
-            handleNonCriticalError(
-                NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "图片数据为空"]),
-                message: "error.image.data.empty".localized()
-            )
-            return
-        }
-
-        let imageSize = nsImage.size
-        if imageSize.width > Constants.maxImageSize || imageSize.height > Constants.maxImageSize {
-            handleNonCriticalError(
-                NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "error.image.size.large".localized()]),
-                message: "error.image.size".localized()
-            )
-            return
-        }
-
-        iconImage = Image(nsImage: nsImage)
-        gameIcon = "data:image/png;base64," + data.base64EncodedString()
+        // 已废弃，逻辑合并到 handleImagePickerResult/saveGame
     }
 
     // MARK: - Game Save Methods
     private func saveGame() async {
         guard playerListViewModel.currentPlayer != nil else {
-            Logger.shared.error("error.no.current.player.log".localized())
+            Logger.shared.error("无法保存游戏，因为没有选择当前玩家。")
             handleNonCriticalError(
                 NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "error.no.current.player".localized()]),
                 message: "error.no.current.player.title".localized()
@@ -469,6 +465,19 @@ struct GameFormView: View {
             )
             return
         }
+        // --- 新增图片写入逻辑 ---
+        if let data = pendingIconData, !gameName.isEmpty,
+           let profileDir = AppPaths.profileDirectory(gameName: gameName) {
+            let iconURL = profileDir.appendingPathComponent(AppConstants.defaultGameIcon)
+            do {
+                try FileManager.default.createDirectory(at: profileDir, withIntermediateDirectories: true)
+                try data.write(to: iconURL)
+                gameIcon = AppConstants.defaultGameIcon
+            } catch {
+                handleNonCriticalError(error, message: "error.image.save.failed".localized())
+            }
+        }
+        // ---
         var gameInfo = GameVersionInfo(
             gameName: gameName,
             gameIcon: gameIcon,
@@ -479,31 +488,25 @@ struct GameFormView: View {
         )
         Logger.shared.info("开始为游戏下载文件: \(gameInfo.gameName)")
         do {
-            // 1. 如果是 Forge，先拉取 profile
-            var forgeResult: (loaderVersion: String, classpath: String, mainClass: String)? = nil
-            if selectedModLoader.lowercased().contains("forge") {
-                do {
-                    forgeResult = try await setupForgeIfNeeded()
-                    if forgeResult == nil { return }
-                } catch {
-                    handleNonCriticalError(error, message: "error.forge.profile.fetch.failed".localized())
-                    return
-                }
-            }
-            // 2. 如果是 Fabric，先拉取 profile
-            var fabricResult: (loaderVersion: String, classpath: String, mainClass: String)? = nil
-            if selectedModLoader.lowercased().contains("fabric") {
-                do {
-                    fabricResult = try await setupFabricIfNeeded()
-                } catch {
+            // 统一处理 mod loader
+            var modLoaderResult: (loaderVersion: String, classpath: String, mainClass: String)? = nil
+            do {
+                modLoaderResult = try await setupModLoaderIfNeeded()
+            } catch {
+                if selectedModLoader.lowercased().contains("fabric") {
                     handleNonCriticalError(error, message: "error.fabric.profile.fetch.failed".localized())
-                    return
+                } else if selectedModLoader.lowercased().contains("forge") {
+                    handleNonCriticalError(error, message: "error.forge.profile.fetch.failed".localized())
+                } else {
+                    handleNonCriticalError(error, message: "error.modloader.profile.fetch.failed".localized())
                 }
+                return
             }
             let downloadedManifest = try await fetchMojangManifest(from: mojangVersion.url)
             let fileManager = try await setupFileManager(manifest: downloadedManifest, modLoader: gameInfo.modLoader)
             try await startDownloadProcess(fileManager: fileManager, manifest: downloadedManifest)
-            gameInfo = await finalizeGameInfo(gameInfo: gameInfo, manifest: downloadedManifest, fabricResult: fabricResult, forgeResult: forgeResult)
+            // 传递 modLoaderResult 给 finalizeGameInfo
+            gameInfo = await finalizeGameInfo(gameInfo: gameInfo, manifest: downloadedManifest, fabricResult: selectedModLoader.lowercased().contains("fabric") ? modLoaderResult : nil, forgeResult: selectedModLoader.lowercased().contains("forge") ? modLoaderResult : nil)
             gameRepository.addGame(gameInfo)
             NotificationManager.send(
                 title: "notification.download.complete.title".localized(),
@@ -551,69 +554,41 @@ struct GameFormView: View {
         try await fileManager.downloadVersionFiles(manifest: manifest,gameName: gameName)
     }
     
-    private func setupFabricIfNeeded() async throws -> (loaderVersion: String, classpath: String, mainClass: String)? {
-        guard selectedModLoader.lowercased().contains("fabric") else { return nil }
-        do {
-            guard let gameInfo = mojangVersions.first(where: { $0.id == selectedGameVersion }).map({_ in 
-                GameVersionInfo(
-                    gameName: gameName,
-                    gameIcon: gameIcon,
-                    gameVersion: selectedGameVersion,
-                    assetIndex: "",
-                    modLoader: selectedModLoader,
-                    isUserAdded: true
-                )
-            }) else { return nil }
-            return try await FabricLoaderService.setupFabric(
-                for: selectedGameVersion,
-                gameInfo: gameInfo,
-                onProgressUpdate: { fileName, completed, total in
-                    Task { @MainActor in
-                        fabricDownloadState.updateProgress(
-                            fileName: fileName,
-                            completed: completed,
-                            total: total,
-                            type: .core
-                        )
+    private func setupModLoaderIfNeeded() async throws -> (loaderVersion: String, classpath: String, mainClass: String)? {
+        let loaderType = selectedModLoader.lowercased()
+        let handler: (any ModLoaderHandler.Type)?
+        switch loaderType {
+        case "fabric":
+            handler = FabricLoaderService.self
+        case "forge":
+            handler = ForgeLoaderService.self
+        default:
+            handler = nil
+        }
+        guard let handler else { return nil }
+        guard let gameInfo = mojangVersions.first(where: { $0.id == selectedGameVersion }).map({_ in 
+            GameVersionInfo(
+                gameName: gameName,
+                gameIcon: gameIcon,
+                gameVersion: selectedGameVersion,
+                assetIndex: "",
+                modLoader: selectedModLoader,
+                isUserAdded: true
+            )
+        }) else { return nil }
+        return try await handler.setup(
+            for: selectedGameVersion,
+            gameInfo: gameInfo,
+            onProgressUpdate: { fileName, completed, total in
+                Task { @MainActor in
+                    if loaderType == "fabric" {
+                        fabricDownloadState.updateProgress(fileName: fileName, completed: completed, total: total, type: .core)
+                    } else if loaderType == "forge" {
+                        forgeDownloadState.updateProgress(fileName: fileName, completed: completed, total: total, type: .core)
                     }
                 }
-            )
-        } catch {
-            throw error
-        }
-    }
-    
-    private func setupForgeIfNeeded() async throws -> (loaderVersion: String, classpath: String, mainClass: String)? {
-        guard selectedModLoader.lowercased().contains("forge") else { return nil }
-        do {
-            guard let gameInfo = mojangVersions.first(where: { $0.id == selectedGameVersion }).map({_ in 
-                GameVersionInfo(
-                    gameName: gameName,
-                    gameIcon: gameIcon,
-                    gameVersion: selectedGameVersion,
-                    assetIndex: "",
-                    modLoader: selectedModLoader,
-                    isUserAdded: true
-                )
-            }) else { return nil }
-            return try await ForgeLoaderService.setupForge(
-                for: selectedGameVersion,
-                gameInfo: gameInfo,
-                onProgressUpdate: { fileName, completed, total in
-                    Task { @MainActor in
-                        forgeDownloadState.updateProgress(
-                            fileName: fileName,
-                            completed: completed,
-                            total: total,
-                            type: .core
-                        )
-                    }
-                }
-            )
-        } catch {
-            handleNonCriticalError(error, message: "error.forge.profile.fetch.failed".localized())
-            return nil
-        }
+            }
+        )
     }
     
     private func finalizeGameInfo(
@@ -696,7 +671,4 @@ struct GameFormView: View {
     }
 }
 
-// MARK: - Supporting Views
-// 以下组件已拆分到独立文件
-// import FormSection, FormInputField, DownloadProgressRow, CustomVersionPicker
 

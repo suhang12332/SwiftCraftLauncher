@@ -1,5 +1,13 @@
 import Foundation
 
+protocol ModLoaderHandler {
+    static func setup(
+        for gameVersion: String,
+        gameInfo: GameVersionInfo,
+        onProgressUpdate: @escaping (String, Int, Int) -> Void
+    ) async throws -> (loaderVersion: String, classpath: String, mainClass: String)
+}
+
 enum FabricSetupError: LocalizedError {
     case loaderInfoNotFound
     case appSupportDirectoryNotFound
@@ -111,4 +119,14 @@ class FabricLoaderService {
         let mainClass = loader.launcherMeta.mainClass.client
         return (loaderVersion: loader.loader.version, classpath: classpathString, mainClass: mainClass)
     }
-} 
+
+    static func setup(
+        for gameVersion: String,
+        gameInfo: GameVersionInfo,
+        onProgressUpdate: @escaping (String, Int, Int) -> Void
+    ) async throws -> (loaderVersion: String, classpath: String, mainClass: String) {
+        return try await setupFabric(for: gameVersion, gameInfo: gameInfo, onProgressUpdate: onProgressUpdate)
+    }
+}
+
+extension FabricLoaderService: ModLoaderHandler {} 

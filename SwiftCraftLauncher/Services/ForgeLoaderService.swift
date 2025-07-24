@@ -125,5 +125,15 @@ class ForgeLoaderService {
         let versions = try await fetchAllForgeVersions(for: minecraftVersion)
         return !versions.isEmpty
     }
-} 
+
+    static func setup(
+        for gameVersion: String,
+        gameInfo: GameVersionInfo,
+        onProgressUpdate: @escaping (String, Int, Int) -> Void
+    ) async throws -> (loaderVersion: String, classpath: String, mainClass: String) {
+        return try await setupForge(for: gameVersion, gameInfo: gameInfo, onProgressUpdate: onProgressUpdate)
+    }
+}
+
+extension ForgeLoaderService: ModLoaderHandler {} 
  

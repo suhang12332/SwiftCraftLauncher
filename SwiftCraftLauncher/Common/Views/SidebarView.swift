@@ -31,23 +31,29 @@ public struct SidebarView: View {
                 ForEach(filteredGames) { game in
                     NavigationLink(value: SidebarItem.game(game.id)) {
                         HStack(spacing: 6) {
-                            if game.gameIcon.hasPrefix("data:image") {
-                                if let base64String = game.gameIcon.split(separator: ",").last,
-                                   let imageData = Data(base64Encoded: String(base64String)),
-                                   let nsImage = NSImage(data: imageData) {
-                                    Image(nsImage: nsImage)
-                                        .resizable()
-                                        .interpolation(.none)
-                                        .scaledToFit()
-                                        .frame(width: 16, height: 16)
-                                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                                } else {
-                                    Image("default_game_icon")
-                                        .resizable()
-                                        .interpolation(.none)
-                                        .scaledToFit()
-                                        .frame(width: 16, height: 16)
-                                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                            if let iconURL = AppPaths.profileDirectory(gameName: game.gameName)?.appendingPathComponent(game.gameIcon),
+                               FileManager.default.fileExists(atPath: iconURL.path) {
+                                AsyncImage(url: iconURL) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .interpolation(.none)
+                                            .scaledToFit()
+                                            .frame(width: 16, height: 16)
+                                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                                    case .failure:
+                                        Image("default_game_icon")
+                                            .resizable()
+                                            .interpolation(.none)
+                                            .scaledToFit()
+                                            .frame(width: 16, height: 16)
+                                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                                    @unknown default:
+                                        EmptyView()
+                                    }
                                 }
                             } else {
                                 Image("default_game_icon")

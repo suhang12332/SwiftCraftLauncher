@@ -9,25 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 // MARK: - Window Delegate
-class WindowDelegate: NSObject, NSWindowDelegate {
-    static let shared = WindowDelegate()
-    private var windows: [NSWindow] = []
-
-    private override init() {
-        super.init()
-    }
-
-    func addWindow(_ window: NSWindow) {
-        windows.append(window)
-        window.delegate = self
-    }
-
-    func windowWillClose(_ notification: Notification) {
-        if let window = notification.object as? NSWindow {
-            windows.removeAll { $0 == window }
-        }
-    }
-}
+// 已移除 NSWindowDelegate 相关代码，纯 SwiftUI 不再需要
 
 // MARK: - Views
 struct GameInfoDetailView: View {
@@ -126,12 +108,28 @@ struct GameInfoDetailView: View {
 
     private var gameIcon: some View {
         Group {
-            if let nsImage = CommonUtil.imageFromBase64(game.gameIcon) {
-                Image(nsImage: nsImage)
-                    .resizable()
-                    .interpolation(.none)
-                    .frame(width: 64, height: 64)
-                    .cornerRadius(12)
+            if let iconURL = AppPaths.profileDirectory(gameName: game.gameName)?.appendingPathComponent(game.gameIcon),
+               FileManager.default.fileExists(atPath: iconURL.path) {
+                AsyncImage(url: iconURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .interpolation(.none)
+                            .frame(width: 64, height: 64)
+                            .cornerRadius(12)
+                    case .failure:
+                        Image("default_game_icon")
+                            .resizable()
+                            .interpolation(.none)
+                            .frame(width: 64, height: 64)
+                            .cornerRadius(12)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
             } else {
                 Image("default_game_icon")
                     .resizable()

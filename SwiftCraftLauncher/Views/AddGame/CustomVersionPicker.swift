@@ -45,8 +45,8 @@ struct CustomVersionPicker: View {
     private var versionInput: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 6)
-                .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
-                .background(Color(NSColor.textBackgroundColor))
+                .stroke(Color.secondary.opacity(0.5), lineWidth: 1)
+                .background(Color(.textBackgroundColor))
             HStack {
                 if selected.isEmpty {
                     if isLoadingVersions {

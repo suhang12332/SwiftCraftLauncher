@@ -42,14 +42,28 @@ public struct DetailToolbarView: ToolbarContent {
             case .game:
                 if let game = currentGame {
                     if !gameType {
-                        if let nsImage = CommonUtil.imageFromBase64(
-                            game.gameIcon
-                        ) {
-                            Image(nsImage: nsImage)
-                                .resizable()
-                                .interpolation(.none)
-                                .frame(width: 22, height: 22)
-                                .cornerRadius(6)
+                        if let iconURL = AppPaths.profileDirectory(gameName: game.gameName)?.appendingPathComponent(game.gameIcon),
+                           FileManager.default.fileExists(atPath: iconURL.path) {
+                            AsyncImage(url: iconURL) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .interpolation(.none)
+                                        .frame(width: 22, height: 22)
+                                        .cornerRadius(6)
+                                case .failure:
+                                    Image("default_game_icon")
+                                        .resizable()
+                                        .interpolation(.none)
+                                        .frame(width: 22, height: 22)
+                                        .cornerRadius(6)
+                                @unknown default:
+                                    EmptyView()
+                                }
+                            }
                         } else {
                             Image("default_game_icon")
                                 .resizable()
@@ -80,17 +94,10 @@ public struct DetailToolbarView: ToolbarContent {
                         Label("play.fill".localized(), systemImage: "play.fill")
                     }
                     .disabled(game.isRunning)
-                    Button(action: {
-                        if let gameDir = AppPaths.profileDirectory(
-                            gameName: game.gameName
-                        ) {
-                            NSWorkspace.shared.selectFile(
-                                nil,
-                                inFileViewerRootedAtPath: gameDir.path
-                            )
+                    if let gameDir = AppPaths.profileDirectory(gameName: game.gameName) {
+                        Link(destination: gameDir) {
+                            Label("play.fill".localized(), systemImage: "folder")
                         }
-                    }) {
-                        Label("play.fill".localized(), systemImage: "folder")
                     }
                 }
             case .resource:
