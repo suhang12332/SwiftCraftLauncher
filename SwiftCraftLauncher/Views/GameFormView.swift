@@ -173,6 +173,7 @@ struct GameFormView: View {
                         Text($0).tag($0)
                     }
                 }
+                .labelsHidden()
                 .pickerStyle(MenuPickerStyle())
                 .disabled(downloadState.isDownloading)
             }
@@ -206,7 +207,7 @@ struct GameFormView: View {
                 
             }
         }
-        .onChange(of: gameName) { newName in
+        .onChange(of: gameName) { old,newName in
             Task {
                 isGameNameDuplicate = await checkGameNameDuplicate(newName)
             }
@@ -864,6 +865,3 @@ private struct CustomVersionPicker: View {
     }
 }
 
-#Preview{
-    GameFormView()
-}
