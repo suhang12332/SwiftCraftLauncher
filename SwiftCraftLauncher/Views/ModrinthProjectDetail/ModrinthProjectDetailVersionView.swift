@@ -543,7 +543,6 @@ struct ModrinthProjectDetailVersionView: View {
                 currentPage = 1
             }
             
-            Logger.shared.info("Loaded \(versions.count) versions for project \(projectId)")
         } catch {
             self.error = error
             Logger.shared.error("Failed to load versions for project \(projectId): \(error.localizedDescription)")

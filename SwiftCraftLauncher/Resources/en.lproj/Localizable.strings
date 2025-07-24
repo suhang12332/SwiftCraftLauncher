@@ -60,6 +60,10 @@
 "settings.concurrent_downloads.label" = "Concurrent Downloads";
 "settings.auto_download_dependencies.label" = "Auto download dependencies (mods required by other mods)";
 "settings.git_proxy_url.label" = "Git Proxy URL";
+"settings.launcher_working_directory" = "Working Directory";
+"settings.launcher_working_directory.reset" = "Reset";
+"settings.launcher_working_directory.choose" = "Choose…";
+"settings.launcher_working_directory.placeholder" = "System default path will be used if not customized";
 
 // Settings - Titles and Placeholders
 "settings.general.title" = "General";
@@ -130,6 +134,7 @@
 "game.form.version" = "Game Version";
 "game.form.modloader" = "Mod Loader";
 "game.form.save.error" = "Failed to save game info";
+"game.form.name.duplicate" = "This game name already exists, please choose another one.";
 
 // Download
 "download.core.title" = "Core Files";

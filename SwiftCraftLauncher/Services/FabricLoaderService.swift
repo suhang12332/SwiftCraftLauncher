@@ -50,7 +50,7 @@ class FabricLoaderService {
     }
 
     /// 判断某 MC 游戏版本是否存在（即该版本有可用的 Loader）
-    static func isGameVersionAvailable(_ minecraftVersion: String) async throws -> Bool {
+    static func isGameVersionAvailable(for minecraftVersion: String) async throws -> Bool {
         let allLoaders = try await fetchAllLoaderVersions(for: minecraftVersion)
         return !allLoaders.isEmpty
     }

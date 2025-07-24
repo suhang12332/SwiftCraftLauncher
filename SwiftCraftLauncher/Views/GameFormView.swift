@@ -33,12 +33,15 @@ struct GameFormView: View {
     @State private var showImagePicker = false
     @State private var selectedGameVersion = ""
     @State private var versionTime = ""
-    @State private var selectedModLoader = AppConstants.modLoaders.first ?? ""
+    @State private var selectedModLoader = "vanilla"
     @State private var mojangVersions: [MojangVersionInfo] = []
     @State private var isLoadingVersions = true
+    @State private var isLoadingLoaders = false
     @State private var fabricLoaderVersion: String = ""
     @State private var downloadTask: Task<Void, Error>? = nil
     @FocusState private var isGameNameFocused: Bool
+    @State private var availableModLoaders: [String] = []
+    @State private var isGameNameDuplicate: Bool = false
 
     // MARK: - Body
     var body: some View {
@@ -51,7 +54,7 @@ struct GameFormView: View {
             handleImagePickerResult(result)
         }
         .task {
-            await initializeView()
+            await loadVersions()
         }
     }
 
@@ -68,7 +71,7 @@ struct GameFormView: View {
     }
 
     private var formContentView: some View {
-        VStack(spacing: Constants.formSpacing) {
+        VStack {
             gameIconAndVersionSection
             gameNameSection
             if downloadState.isDownloading {
@@ -138,13 +141,18 @@ struct GameFormView: View {
             versionPicker
             modLoaderPicker
         }
-        // 移除 onChange 监听
+        .onChange(of: selectedGameVersion) { old,newVersion in
+            if !isLoadingVersions {
+                Task { await loadModLoaders(for: newVersion) }
+            }
+        }
     }
 
     private var versionPicker: some View {
         CustomVersionPicker(
             selected: $selectedGameVersion,
             versions: mojangVersions,
+            isLoadingVersions: $isLoadingVersions,
             time: $versionTime
         )
         .disabled(downloadState.isDownloading)
@@ -155,25 +163,53 @@ struct GameFormView: View {
             Text("game.form.modloader".localized())
                 .font(.subheadline)
                 .foregroundColor(.primary)
-            Picker("", selection: $selectedModLoader) {
-                ForEach(AppConstants.modLoaders, id: \.self) {
-                    Text($0).tag($0)
+            if isLoadingVersions || isLoadingLoaders {
+                HStack {
+                    ProgressView().controlSize(.mini)
                 }
+            } else {
+                Picker("", selection: $selectedModLoader) {
+                    ForEach(availableModLoaders, id: \.self) {
+                        Text($0).tag($0)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .disabled(downloadState.isDownloading)
             }
-            .pickerStyle(MenuPickerStyle())
-            .disabled(downloadState.isDownloading)
         }
     }
 
     private var gameNameSection: some View {
+        
         FormSection {
-            FormInputField(
-                title: "game.form.name".localized(),
-                placeholder: "game.form.name.placeholder".localized(),
-                text: $gameName,
-                isFocused: $isGameNameFocused
-            )
-            .disabled(downloadState.isDownloading)
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("game.form.name".localized())
+                            .font(.subheadline)
+                            .foregroundColor(.primary)
+                        if isGameNameDuplicate {
+                            Spacer()
+                            Text("game.form.name.duplicate".localized())
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.trailing, 4)
+                        }
+                    }
+                    TextField("game.form.name.placeholder".localized(), text: $gameName)
+                        .textFieldStyle(.roundedBorder)
+                        .foregroundColor(.primary)
+                        .focused($isGameNameFocused)
+                }
+                .disabled(downloadState.isDownloading)
+                
+                
+            }
+        }
+        .onChange(of: gameName) { newName in
+            Task {
+                isGameNameDuplicate = await checkGameNameDuplicate(newName)
+            }
         }
     }
 
@@ -266,7 +302,7 @@ struct GameFormView: View {
 
     // MARK: - Helper Methods
     private var isFormValid: Bool {
-        !gameName.isEmpty
+        !gameName.isEmpty && !isGameNameDuplicate
     }
 
     private func initializeView() async {
@@ -292,11 +328,27 @@ struct GameFormView: View {
                 }
                 self.isLoadingVersions = false
             }
+            // 版本加载完后再加载 mod loader
+            if let firstVersion = releaseVersions.first {
+                await loadModLoaders(for: firstVersion.id)
+            }
         } catch {
             await MainActor.run {
                 self.isLoadingVersions = false
                 handleNonCriticalError(error, message: "error.version.data.load.failed".localized())
             }
+        }
+    }
+
+    private func loadModLoaders(for version: String) async {
+        isLoadingLoaders = true
+        let loaders = await CommonService.availableLoaders(for: version)
+        await MainActor.run {
+            self.availableModLoaders = loaders
+            if !loaders.contains(self.selectedModLoader) {
+                self.selectedModLoader = loaders.first ?? "vanilla"
+            }
+            isLoadingLoaders = false
         }
     }
 
@@ -630,6 +682,17 @@ struct GameFormView: View {
         )
         await MainActor.run { downloadState.reset() }
     }
+
+    private func checkGameNameDuplicate(_ name: String) async -> Bool {
+        guard !name.isEmpty,
+              let profilesDir = AppPaths.profileRootDirectory else { return false }
+        let fileManager = FileManager.default
+        let gameDir = profilesDir.appendingPathComponent(name)
+        if fileManager.fileExists(atPath: gameDir.path) {
+            return true
+        }
+        return false
+    }
 }
 
 // MARK: - Supporting Views
@@ -656,15 +719,7 @@ private struct FormInputField: View {
     @FocusState.Binding var isFocused: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.subheadline)
-                .foregroundColor(.primary)
-            TextField(placeholder, text: $text)
-                .textFieldStyle(.roundedBorder)
-                .foregroundColor(.primary)
-                .focused($isFocused)
-        }
+        
     }
 }
 
@@ -709,6 +764,7 @@ private struct DownloadProgressRow: View {
 private struct CustomVersionPicker: View {
     @Binding var selected: String
     let versions: [MojangVersionInfo]
+    @Binding var isLoadingVersions: Bool
     @Binding var time: String
     @State private var showMenu = false
     private var groupedVersions: [(String, [MojangVersionInfo])] {
@@ -745,14 +801,22 @@ private struct CustomVersionPicker: View {
                 .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
                 .background(Color(NSColor.textBackgroundColor))
             HStack {
-                Text(selected.isEmpty ? "game.form.version.placeholder".localized() : selected)
-                    .foregroundColor(.primary)
-                    .padding(.horizontal, 8)
+                if selected.isEmpty {
+                    if isLoadingVersions {
+                        ProgressView().controlSize(.mini).foregroundColor(.secondary)
+                            .padding(.horizontal, 8)
+                    } else {
+                        Text("game.form.version.placeholder".localized()).foregroundColor(.primary)
+                            .padding(.horizontal, 8)
+                    }
+                } else {
+                    Text(selected).foregroundColor(.primary)
+                        .padding(.horizontal, 8)
+                }
                 Spacer()
             }
         }
         .frame(height: 22)
-        .padding(.leading, 8)
         .onTapGesture { showMenu.toggle() }
         .popover(isPresented: $showMenu, arrowEdge: .trailing) {
             versionPopoverContent
@@ -800,3 +864,6 @@ private struct CustomVersionPicker: View {
     }
 }
 
+#Preview{
+    GameFormView()
+}

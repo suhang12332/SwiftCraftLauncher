@@ -25,8 +25,15 @@ struct AppPaths {
     static var versionsDirectory: URL? {
         metaDirectory?.appendingPathComponent("versions")
     }
+    static var profileRootDirectory: URL? {
+        let customPath = GeneralSettingsManager.shared.launcherWorkingDirectory
+        guard !customPath.isEmpty else { return nil }
+        
+        let baseURL = URL(fileURLWithPath: customPath, isDirectory: true)
+        return baseURL.appendingPathComponent("profiles", isDirectory: true)
+    }
     static func profileDirectory(gameName: String) -> URL? {
-        launcherSupportDirectory?.appendingPathComponent("profiles").appendingPathComponent(gameName)
+        profileRootDirectory?.appendingPathComponent(gameName)
     }
     static func modsDirectory(gameName: String) -> URL? {
         profileDirectory(gameName: gameName)?.appendingPathComponent("mods")

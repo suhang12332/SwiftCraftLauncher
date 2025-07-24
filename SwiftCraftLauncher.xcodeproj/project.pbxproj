@@ -12,7 +12,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9023D8312E3139B5005A53F1 /* SwiftCraftLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = SwiftCraftLauncher.app; path = /Users/su/Development/XCodeProjects/SwiftCraftLauncher/build/Debug/SwiftCraftLauncher.app; sourceTree = "<absolute>"; };
+		902636532E314206004DBAE8 /* SwiftCraftLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = SwiftCraftLauncher.app; path = /Users/su/Development/XCodeProjects/SwiftCraftLauncher/build/Debug/SwiftCraftLauncher.app; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -67,7 +67,7 @@
 				9023D91E2E313A9C005A53F1 /* MarkdownUI */,
 			);
 			productName = SwiftCraftLauncher;
-			productReference = 9023D8312E3139B5005A53F1 /* SwiftCraftLauncher.app */;
+			productReference = 902636532E314206004DBAE8 /* SwiftCraftLauncher.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -91,6 +91,8 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 9023D8282E3139B5005A53F1;
 			minimizedProjectReferenceProxies = 1;
@@ -252,6 +254,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = SwiftCraftLauncher/SwiftCraftLauncher.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -277,6 +280,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = SwiftCraftLauncher/SwiftCraftLauncher.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

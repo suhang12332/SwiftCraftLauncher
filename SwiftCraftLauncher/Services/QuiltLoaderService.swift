@@ -1,6 +1,6 @@
 import Foundation
 
-class QuiltService {
+class QuiltLoaderService {
     enum QuiltError: Error, LocalizedError {
         case networkError(String)
         case invalidResponse

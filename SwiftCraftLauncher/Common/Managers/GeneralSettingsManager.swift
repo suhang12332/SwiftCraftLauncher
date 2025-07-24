@@ -31,6 +31,10 @@ class GeneralSettingsManager: ObservableObject {
     @AppStorage("themeMode") public var themeMode: ThemeMode = .system {
         didSet { objectWillChange.send() }
     }
+    // 新增：启动器工作目录
+    @AppStorage("launcherWorkingDirectory") public var launcherWorkingDirectory: String = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first ?? "" {
+        didSet { objectWillChange.send() }
+    }
     
     private init() {}
 }

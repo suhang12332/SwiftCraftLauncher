@@ -49,11 +49,6 @@ public struct SettingRow<Content: View>: View {
     let label: String
     let content: () -> Content
     
-    init(label: String, @ViewBuilder content: @escaping () -> Content) {
-        self.label = label
-        self.content = content
-    }
-    
     public var body: some View {
         HStack {
             Text(label.localized())

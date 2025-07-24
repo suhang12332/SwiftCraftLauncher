@@ -138,7 +138,7 @@ class GameRepository: ObservableObject {
     // MARK: - Private Methods
 
     /// 从 UserDefaults 加载游戏列表
-    private func loadGames() {
+    func loadGames() {
         guard let savedGamesData = UserDefaults.standard.data(forKey: gamesKey)
         else {
             games = []
@@ -147,10 +147,20 @@ class GameRepository: ObservableObject {
 
         do {
             let decoder = JSONDecoder()
-            games = try decoder.decode(
+            let allGames = try decoder.decode(
                 [GameVersionInfo].self,
                 from: savedGamesData
             )
+            // 只保留本地 profiles 目录下实际存在的游戏（只判断文件夹名）
+            guard let profilesDir = AppPaths.profileRootDirectory else {
+                games = []
+                return
+            }
+            let fileManager = FileManager.default
+            let localGameNames: Set<String> = (try? fileManager.contentsOfDirectory(atPath: profilesDir.path))
+                .map { Set($0) } ?? []
+            let validGames = allGames.filter { localGameNames.contains($0.gameName) }
+            games = validGames
         } catch {
             Logger.shared.error(
                 "加载游戏列表失败：\(error.localizedDescription)"

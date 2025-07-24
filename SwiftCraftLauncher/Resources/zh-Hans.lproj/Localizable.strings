@@ -75,7 +75,10 @@
 "settings.concurrent_downloads.label" = "下载并发数";
 "settings.auto_download_dependencies.label" = "自动下载前置Mod（依赖）";
 "settings.git_proxy_url.label" = "Git 代理地址";
-
+"settings.launcher_working_directory" = "工作目录";
+"settings.launcher_working_directory.reset" = "重置";
+"settings.launcher_working_directory.choose" = "选择…";
+"settings.launcher_working_directory.placeholder" = "未自定义时使用系统默认路径";
 // Settings - Titles and Placeholders
 "settings.general.title" = "通用";
 "settings.player.title" = "玩家";
@@ -187,6 +190,7 @@
 "game.form.version" = "游戏版本";
 "game.form.modloader" = "mod加载器";
 "game.form.save.error" = "保存游戏信息失败";
+"game.form.name.duplicate" = "该游戏名已存在，请更换";
 
 // Download Progress
 "download.core.title" = "核心文件";

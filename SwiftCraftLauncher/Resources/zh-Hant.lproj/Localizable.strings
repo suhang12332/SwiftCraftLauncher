@@ -52,6 +52,10 @@
 "settings.concurrent_downloads.label" = "下載並發數";
 "settings.auto_download_dependencies.label" = "自動下載前置Mod（依賴）";
 "settings.git_proxy_url.label" = "Git 代理地址";
+"settings.launcher_working_directory" = "工作目錄";
+"settings.launcher_working_directory.reset" = "重置";
+"settings.launcher_working_directory.choose" = "選擇…";
+"settings.launcher_working_directory.placeholder" = "未自訂時使用系統預設路徑";
 // Settings - Titles and Placeholders
 "settings.general.title" = "通用";
 "settings.player.title" = "玩家";
@@ -140,6 +144,7 @@
 "game.form.icon.description" = "為遊戲選擇圖標";
 "game.form.name" = "遊戲名稱";
 "game.form.name.placeholder" = "請輸入遊戲名稱";
+"game.form.name.duplicate" = "該遊戲名已存在，請更換";
 "game.form.version" = "遊戲版本";
 "game.form.modloader" = "mod加載器";
 "game.form.save.error" = "保存遊戲信息失敗";

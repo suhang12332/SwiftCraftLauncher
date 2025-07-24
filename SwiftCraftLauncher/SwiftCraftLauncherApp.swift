@@ -26,7 +26,7 @@ struct SwiftCraftLauncherApp: App {
         .windowResizability(.contentMinSize)
         
         Settings {
-            SettingsView()
+            SettingsView().environmentObject(gameRepository)
         }
     }
 }
