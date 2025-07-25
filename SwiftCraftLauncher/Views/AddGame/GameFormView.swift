@@ -180,7 +180,7 @@ struct GameFormView: View {
             modLoaderPicker
         }
         .onChange(of: selectedGameVersion) { old, newVersion in
-            guard old != newVersion, !isLoadingVersions else { return }
+            guard old != newVersion, !isLoadingVersions, !isLoadingLoaders else { return }
             Task { await loadModLoaders(for: newVersion) }
         }
     }
@@ -247,7 +247,10 @@ struct GameFormView: View {
         }
         .onChange(of: gameName) { old,newName in
             Task {
-                isGameNameDuplicate = await checkGameNameDuplicate(newName)
+                let isDuplicate = await checkGameNameDuplicate(newName)
+                if isDuplicate != isGameNameDuplicate {
+                    isGameNameDuplicate = isDuplicate
+                }
             }
         }
     }
@@ -396,9 +399,10 @@ struct GameFormView: View {
         let loaders = await CommonService.availableLoaders(for: version)
         await MainActor.run {
             self.availableModLoaders = loaders
-            if !loaders.contains(self.selectedModLoader) {
-                if self.selectedModLoader != loaders.first {
-                    self.selectedModLoader = loaders.first ?? "vanilla"
+            // 只在 selectedModLoader 不在 loaders 里且 loaders 非空时才赋值，避免递归
+            if !loaders.contains(self.selectedModLoader), let first = loaders.first {
+                if self.selectedModLoader != first {
+                    self.selectedModLoader = first
                 }
             }
             isLoadingLoaders = false
@@ -650,34 +654,46 @@ struct GameFormView: View {
         case "fabric":
             if let result = fabricResult {
                 updatedGameInfo.modVersion = result.loaderVersion
-                updatedGameInfo.modJvm = result.classpath
+                updatedGameInfo.modClassPath = result.classpath
                 updatedGameInfo.mainClass = result.mainClass
             }
         case "forge":
             if let result = forgeResult {
                 updatedGameInfo.modVersion = result.loaderVersion
-                updatedGameInfo.modJvm = result.classpath
+                updatedGameInfo.modClassPath = result.classpath
                 updatedGameInfo.mainClass = result.mainClass
-                // 自动补充 --launchTarget forge_client
-                var gameArgs: [String] = []
-                if let forgeLoader = try? await ForgeLoaderService.fetchLatestForgeProfile(for: selectedGameVersion),
-                   let args = forgeLoader.arguments?.game {
-                    gameArgs = args
+                // 自动补充
+  
+                if let forgeLoader = try? await ForgeLoaderService.fetchLatestForgeProfile(for: selectedGameVersion) {
+                    if let args = forgeLoader.arguments?.game {
+                        updatedGameInfo.gameArguments = args
+                    }
+                    if let jvms = forgeLoader.arguments?.jvm {
+                        updatedGameInfo.modJvm = jvms
+                    }
                 }
-                updatedGameInfo.gameArguments = gameArgs
             }
         case "neoforge":
             if let result = neoForgeResult {
                 updatedGameInfo.modVersion = result.loaderVersion
-                updatedGameInfo.modJvm = result.classpath
+                updatedGameInfo.modClassPath = result.classpath
                 updatedGameInfo.mainClass = result.mainClass
                 // 自动补充 
-                var gameArgs: [String] = []
-                if let forgeLoader = try? await NeoForgeLoaderService.fetchLatestNeoForgeProfile(for: selectedGameVersion),
-                   let args = forgeLoader.arguments?.game {
-                    gameArgs = args
+  
+                if let neoForgeLoader = try? await NeoForgeLoaderService.fetchLatestNeoForgeProfile(for: selectedGameVersion) {
+                    if let args = neoForgeLoader.arguments?.game {
+                        updatedGameInfo.gameArguments = args
+                    }
+                    
+                    if let jvms = neoForgeLoader.arguments?.jvm {
+                        updatedGameInfo.modJvm = jvms.map {
+                            $0
+                                .replacingOccurrences(of: "${version_name}", with: selectedGameVersion)
+                                .replacingOccurrences(of: "${classpath_separator}", with: ":")
+                                .replacingOccurrences(of: "${library_directory}", with: AppPaths.librariesDirectory!.absoluteString)
+                        }
+                    }
                 }
-                updatedGameInfo.gameArguments = gameArgs
             }
         default:
             updatedGameInfo.mainClass = manifest.mainClass

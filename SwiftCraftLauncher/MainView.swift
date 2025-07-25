@@ -1,6 +1,6 @@
 //
 //  MainView.swift
-//  MLauncher
+//  SwiftCraftLauncher
 //
 //  Created by su on 2025/5/30.
 //

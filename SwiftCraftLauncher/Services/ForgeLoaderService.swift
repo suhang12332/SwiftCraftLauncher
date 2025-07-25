@@ -99,13 +99,6 @@ class ForgeLoaderService {
     }
 
 
-    static func generateClasspath(from loader: ForgeLoader, librariesDir: URL) -> String {
-        let jarPaths: [String] = loader.libraries.map { lib in
-            let artifact = lib.downloads.artifact
-            return librariesDir.appendingPathComponent(artifact.path).path
-        }
-        return jarPaths.joined(separator: ":")
-    }
 
     static func setupForge(
         for gameVersion: String,
@@ -119,7 +112,7 @@ class ForgeLoaderService {
         let forgeManager = ForgeFileManager(librariesDir: librariesDirectory)
         forgeManager.onProgressUpdate = onProgressUpdate
         try await forgeManager.downloadForgeJars(libraries: forgeProfile.libraries)
-        let classpathString = generateClasspath(from: forgeProfile, librariesDir: librariesDirectory)
+        let classpathString = CommonService.generateClasspath(from: forgeProfile, librariesDir: librariesDirectory)
         let mainClass = forgeProfile.mainClass
         let loaderVersion = forgeProfile.id
         return (loaderVersion: loaderVersion, classpath: classpathString, mainClass: mainClass)

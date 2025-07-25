@@ -11,11 +11,11 @@
 "player.status.last_played" = "Last played: %@";
 
 // General
-"app.name" = "MLauncher";
+"app.name" = "SwiftCraftLauncher";
 "app.version" = "Version %@";
 
 // Sidebar
-"sidebar.title" = "MLauncher";
+"sidebar.title" = "SwiftCraftLauncher";
 "sidebar.select_item" = "Please select an item";
 "sidebar.resources.title" = "Resources";
 "sidebar.games.title" = "Games";

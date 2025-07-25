@@ -19,7 +19,7 @@
 "sidebar.games" = "游戏";
 "sidebar.resources" = "资源";
 "sidebar.select_item" = "请选择项目";
-"app.name" = "MLauncher";
+"app.name" = "SwiftCraftLauncher";
 "app.version" = "版本 %@";
 
 // Resource Types

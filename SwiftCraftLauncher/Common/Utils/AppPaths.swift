@@ -1,14 +1,12 @@
 import Foundation
 
 struct AppPaths {
-    static var appName: String {
-        Bundle.main.infoDictionary?["CFBundleName"] as? String ?? AppConstants.appName
-    }
+    
     static var launcherSupportDirectory: URL? {
         guard let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
             return nil
         }
-        return appSupport.appendingPathComponent(appName)
+        return appSupport.appendingPathComponent(AppConstants.appName)
     }
     static var metaDirectory: URL? {
         launcherSupportDirectory?.appendingPathComponent("meta")

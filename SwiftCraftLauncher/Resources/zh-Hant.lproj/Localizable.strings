@@ -9,10 +9,10 @@
 "player.status.playing" = "正在遊玩";
 "player.status.last_played" = "最後遊玩：%@";
 // 通用
-"app.name" = "MLauncher";
+"app.name" = "SwiftCraftLauncher";
 "app.version" = "版本 %@";
 // 側邊欄
-"sidebar.title" = "MLauncher";
+"sidebar.title" = "SwiftCraftLauncher";
 "sidebar.select_item" = "請選擇項目";
 "sidebar.resources.title" = "資源列表";
 "sidebar.games.title" = "遊戲列表";

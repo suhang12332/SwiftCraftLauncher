@@ -1,6 +1,6 @@
 //
 //  ModrinthProjectDetailVersionView.swift
-//  MLauncher
+//  SwiftCraftLauncher
 //
 //  Created by su on 2025/6/3.
 //

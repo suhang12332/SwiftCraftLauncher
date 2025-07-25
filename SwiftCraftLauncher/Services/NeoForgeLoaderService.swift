@@ -62,6 +62,31 @@ class NeoForgeLoaderService {
     }
 
     /// 获取最新的 NeoForge profile（version.json）
+    static func fetchLatestNeoForgeProfileFull(for minecraftVersion: String) async throws -> ForgeLoader {
+        
+        var loader = try await fetchLatestNeoForgeProfile(for: minecraftVersion)
+        let version = loader.version
+        let basePath = "net/neoforged/neoforge/\(version)"
+        let jarName = "neoforge-\(version)-client.jar"
+        let mavenUrl = URLConfig.API.NeoForge.gitReleasesBase
+            .appendingPathComponent(version)
+            .appendingPathComponent("neoforge-\(version)-client.jar").absoluteString
+        loader.libraries.append(ForgeLibrary(
+            name: "net.neoforged:neoforge:\(version):client",
+            downloads: ForgeLibraryDownloads(
+                artifact: ForgeLibraryArtifact(
+                    path: "\(basePath)/\(jarName)",
+                    url: mavenUrl,
+                    sha1: "",
+                    size: 0
+                )
+            )
+        ))
+        
+        return loader
+    }
+    
+    /// 获取最新的 NeoForge profile（version.json）不拼接的client
     static func fetchLatestNeoForgeProfile(for minecraftVersion: String) async throws -> ForgeLoader {
         let neoForgeVersion = try await fetchLatestNeoForgeVersion(for: minecraftVersion)
         // 1. 查全局缓存
@@ -81,39 +106,12 @@ class NeoForgeLoaderService {
             throw NeoForgeError.invalidResponse
         }
         
-        
-        
         var loader = try JSONDecoder().decode(ForgeLoader.self, from: data)
-//        let targetName = "net.neoforged:neoforge:\(neoForgeVersion):client"
-//                let targetURL = URLConfig.API.NeoForge.gitReleasesBase
-//                    .appendingPathComponent(neoForgeVersion)
-//                    .appendingPathComponent("neoforged-\(neoForgeVersion)-client.jar").absoluteString
-//                for i in 0..<loader.libraries.count {
-//                    if loader.libraries[i].name == targetName {
-//                        loader.libraries[i].downloads.artifact.url = targetURL
-//                    }
-//                }
-        // 补全universal
-        let basePath = "net/neoforged/neoforge/\(neoForgeVersion)"
-        let jarName = "neoforge-\(neoForgeVersion)-client.jar"
-        let mavenUrl = URLConfig.API.NeoForge.gitReleasesBase
-            .appendingPathComponent(neoForgeVersion)
-            .appendingPathComponent("neoforge-\(neoForgeVersion)-client.jar").absoluteString
-        loader.libraries.append(ForgeLibrary(
-            name: "net.neoforged:neoforge:\(neoForgeVersion):client",
-            downloads: ForgeLibraryDownloads(
-                artifact: ForgeLibraryArtifact(
-                    path: "\(basePath)/\(jarName)",
-                    url: mavenUrl,
-                    sha1: "",
-                    size: 0
-                )
-            )
-        ))
-        
+        loader.version = neoForgeVersion
         AppCacheManager.shared.set(namespace: "neoforge", key: neoForgeVersion, value: loader)
         return loader
     }
+
 
     /// 安装并准备 NeoForge，返回 (loaderVersion, classpath, mainClass)
     static func setupNeoForge(
@@ -121,14 +119,16 @@ class NeoForgeLoaderService {
         gameInfo: GameVersionInfo,
         onProgressUpdate: @escaping (String, Int, Int) -> Void
     ) async throws -> (loaderVersion: String, classpath: String, mainClass: String) {
-        let neoForgeProfile = try await fetchLatestNeoForgeProfile(for: gameVersion)
+        let neoForgeProfile = try await fetchLatestNeoForgeProfileFull(for: gameVersion)
         guard let librariesDirectory = AppPaths.librariesDirectory else {
             throw NSError(domain: "NeoForgeService", code: 1, userInfo: [NSLocalizedDescriptionKey: "error.neoforge.meta.libraries.notfound"])
         }
         let forgeManager = ForgeFileManager(librariesDir: librariesDirectory)
         forgeManager.onProgressUpdate = onProgressUpdate
         try await forgeManager.downloadForgeJars(libraries: neoForgeProfile.libraries)
-        let classpathString = ForgeLoaderService.generateClasspath(from: neoForgeProfile, librariesDir: librariesDirectory)
+        // neoforge 比较特殊,classpath不需要拼接client和universal
+        let result = try await fetchLatestNeoForgeProfile(for: gameVersion)
+        let classpathString = CommonService.generateClasspath(from: result, librariesDir: librariesDirectory)
         let mainClass = neoForgeProfile.mainClass
         let loaderVersion = neoForgeProfile.id
         return (loaderVersion: loaderVersion, classpath: classpathString, mainClass: mainClass)

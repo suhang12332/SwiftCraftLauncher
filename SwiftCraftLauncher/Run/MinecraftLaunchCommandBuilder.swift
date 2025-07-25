@@ -34,7 +34,7 @@ struct MinecraftLaunchCommandBuilder {
         // 2. 合并 manifest classpath 和 modJvmJars，manifest 优先，按 group/artifact 去重
         let manifestJarPaths = manifest.libraries
             .compactMap { $0.downloads?.artifact.map { librariesDir.appendingPathComponent($0.path).path } }
-        let modJvmJars = gameInfo.modJvm
+        let modClassPath = gameInfo.modClassPath
             .split(separator: ":")
             .map { String($0) }
             .filter { !$0.isEmpty }
@@ -53,7 +53,7 @@ struct MinecraftLaunchCommandBuilder {
             }
             mergedJars.append(jar)
         }
-        for jar in modJvmJars {
+        for jar in modClassPath {
             if let key = extractGroupArtifact(from: jar), !seenKeys.contains(key) {
                 mergedJars.append(jar)
             }
@@ -89,18 +89,21 @@ struct MinecraftLaunchCommandBuilder {
         }
         let classpathString = classpathList.joined(separator: ":")
         // JVM 参数
-        let jvmArgs: [String] = [
+        var jvmArgs: [String] = [
             "-Djava.library.path=\(quotedNativesDir)",
             "-Djna.tmpdir=\(quotedNativesDir)",
             "-Dorg.lwjgl.system.SharedLibraryExtractPath=\(quotedNativesDir)",
             "-Dio.netty.native.workdir=\(quotedNativesDir)",
             "-Dminecraft.launcher.brand=\(launcherBrand)",
             "-Dminecraft.launcher.version=\(launcherVersion)",
-            "-Xmx\(gameInfo.runningMemorySize)M",
             "-Xms\(gameInfo.runningMemorySize)M",
+            "-Xmx\(gameInfo.runningMemorySize)M",
             "-XstartOnFirstThread",
             "-cp", classpathString
         ]
+        if !gameInfo.modJvm.isEmpty {
+            jvmArgs.append(contentsOf: gameInfo.modJvm)
+        }
 
         // Minecraft 启动参数
         var mcArgs: [String] = [
@@ -111,9 +114,9 @@ struct MinecraftLaunchCommandBuilder {
             "--assetsDir", quotedAssetsDir,
             "--assetIndex", gameInfo.assetIndex,
             "--uuid", uuid,
-            "--accessToken",
-            "--clientId", "SCL",
-            "--xuid",
+            "--accessToken", "SCL-\(AppConstants.appVersion)",
+            "--clientId",
+            "--xuid", "0",
             "--userType", "msa",
             "--versionType", "release"
         ]

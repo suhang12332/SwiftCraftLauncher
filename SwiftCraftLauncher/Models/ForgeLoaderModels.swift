@@ -2,6 +2,7 @@ import Foundation
 
 /// 兼容 Forge version.json 的完整结构体
 struct ForgeLoader: Codable {
+    var version: String
     let id: String
     let time: String
     let releaseTime: String

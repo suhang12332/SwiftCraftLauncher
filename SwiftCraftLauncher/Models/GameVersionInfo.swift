@@ -1,6 +1,6 @@
 //
 //  GameModels.swift
-//  MLauncher
+//  SwiftCraftLauncher
 //
 //  Created by su on 2025/5/30.
 //
@@ -29,7 +29,9 @@ struct GameVersionInfo: Codable, Identifiable, Hashable {
     var modVersion: String
     
     /// Mod JVM参数
-    var modJvm: String
+    var modJvm: [String] = []
+    
+    var modClassPath: String
     
     /// 资源索引版本
     var assetIndex: String
@@ -78,6 +80,7 @@ struct GameVersionInfo: Codable, Identifiable, Hashable {
     ///   - gameVersion: 游戏版本号
     ///   - modVersion: Mod版本号
     ///   - modJvm: Mod JVM参数，默认空字符串
+    ///   - modClassPath: Mod Classpath参数，默认空字符串
     ///   - assetIndex: 资源索引版本
     ///   - modLoader: 模组加载器类型
     ///   - isUserAdded: 是否用户手动添加
@@ -97,7 +100,8 @@ struct GameVersionInfo: Codable, Identifiable, Hashable {
         gameIcon: String,
         gameVersion: String,
         modVersion: String = "",
-        modJvm: String = "",
+        modJvm: [String] = [],
+        modClassPath: String = "",
         assetIndex: String,
         modLoader: String,
         isUserAdded: Bool,
@@ -118,6 +122,7 @@ struct GameVersionInfo: Codable, Identifiable, Hashable {
         self.gameVersion = gameVersion
         self.modVersion = modVersion
         self.modJvm = modJvm
+        self.modClassPath = modClassPath
         self.assetIndex = assetIndex
         self.modLoader = modLoader
         self.isUserAdded = isUserAdded
