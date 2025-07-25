@@ -9,8 +9,14 @@ enum MinecraftService {
         let (data, _) = try await URLSession.shared.data(
             from: URLConfig.API.Minecraft.versionList
         )
-        Logger.shared.info("Modrinth 搜索 URL：\(URLConfig.API.Minecraft.versionList)")
+//        Logger.shared.info("Modrinth 搜索 URL：\(URLConfig.API.Minecraft.versionList)")
         return try JSONDecoder().decode(MojangVersionManifest.self, from: data)
+    }
+
+    // 判断当前版本是否是最新 release 版本
+    static func isLatestReleaseVersion(currentVersion: String) async -> Bool {
+        guard let manifest = try? await fetchVersionManifest() else { return false }
+        return manifest.latest.release == currentVersion
     }
 
     // Add other Minecraft related API calls here in the future

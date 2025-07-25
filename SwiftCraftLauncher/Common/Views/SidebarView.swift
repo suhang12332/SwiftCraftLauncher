@@ -39,18 +39,18 @@ public struct SidebarView: View {
                                         ProgressView()
                                     case .success(let image):
                                         image
-                                            .resizable()
-                                            .interpolation(.none)
-                                            .scaledToFit()
-                                            .frame(width: 16, height: 16)
-                                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                                        .resizable()
+                                        .interpolation(.none)
+                                        .scaledToFit()
+                                        .frame(width: 16, height: 16)
+                                        .clipShape(RoundedRectangle(cornerRadius: 4))
                                     case .failure:
-                                        Image("default_game_icon")
-                                            .resizable()
-                                            .interpolation(.none)
-                                            .scaledToFit()
-                                            .frame(width: 16, height: 16)
-                                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                                    Image("default_game_icon")
+                                        .resizable()
+                                        .interpolation(.none)
+                                        .scaledToFit()
+                                        .frame(width: 16, height: 16)
+                                        .clipShape(RoundedRectangle(cornerRadius: 4))
                                     @unknown default:
                                         EmptyView()
                                     }

@@ -27,6 +27,7 @@ struct GameFormView: View {
     @StateObject private var downloadState = DownloadState()
     @StateObject private var fabricDownloadState = DownloadState()
     @StateObject private var forgeDownloadState = DownloadState()
+    @StateObject private var neoForgeDownloadState = DownloadState()
     @State private var gameName = ""
     @State private var gameIcon = AppConstants.defaultGameIcon
     @State private var iconImage: Image?
@@ -43,6 +44,7 @@ struct GameFormView: View {
     @State private var availableModLoaders: [String] = []
     @State private var isGameNameDuplicate: Bool = false
     @State private var pendingIconData: Data? = nil
+    @State private var pendingIconURL: URL? = nil
 
     // MARK: - Body
     var body: some View {
@@ -119,14 +121,27 @@ struct GameFormView: View {
     
     private var iconContainer: some View {
         ZStack {
-            if let data = pendingIconData, let image = NSImage(data: data) {
-                Image(nsImage: image)
-                    .resizable()
-                    .interpolation(.none)
-                    .scaledToFill()
-                    .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
-                    .contentShape(Rectangle())
+            if let url = pendingIconURL {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .interpolation(.none)
+                            .scaledToFill()
+                            .frame(width: Constants.iconSize, height: Constants.iconSize)
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
+                            .contentShape(Rectangle())
+                    case .failure:
+                        RoundedRectangle(cornerRadius: Constants.cornerRadius)
+                            .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
+                            .background(Color.gray.opacity(0.08))
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
             } else if let iconURL = AppPaths.profileDirectory(gameName: gameName)?.appendingPathComponent(AppConstants.defaultGameIcon),
                       FileManager.default.fileExists(atPath: iconURL.path) {
                 AsyncImage(url: iconURL) { phase in
@@ -164,10 +179,9 @@ struct GameFormView: View {
             versionPicker
             modLoaderPicker
         }
-        .onChange(of: selectedGameVersion) { old,newVersion in
-            if !isLoadingVersions {
-                Task { await loadModLoaders(for: newVersion) }
-            }
+        .onChange(of: selectedGameVersion) { old, newVersion in
+            guard old != newVersion, !isLoadingVersions else { return }
+            Task { await loadModLoaders(for: newVersion) }
         }
     }
 
@@ -224,6 +238,7 @@ struct GameFormView: View {
                         .textFieldStyle(.roundedBorder)
                         .foregroundColor(.primary)
                         .focused($isGameNameFocused)
+                        .disabled(downloadState.isDownloading || isLoadingLoaders)
                 }
                 .disabled(downloadState.isDownloading)
                 
@@ -259,7 +274,7 @@ struct GameFormView: View {
                     version: nil
                 )
             }
-            if selectedModLoader.lowercased().contains("fabric") {
+            if selectedModLoader.lowercased() == "fabric" {
                 FormSection {
                     DownloadProgressRow(
                         title: "fabric.loader.title".localized(),
@@ -271,7 +286,7 @@ struct GameFormView: View {
                     )
                 }
             }
-            if selectedModLoader.lowercased().contains("forge") {
+            if selectedModLoader.lowercased() == "forge" {
                 FormSection {
                     DownloadProgressRow(
                         title: "forge.loader.title".localized(),
@@ -279,6 +294,18 @@ struct GameFormView: View {
                         currentFile: forgeDownloadState.currentCoreFile,
                         completed: forgeDownloadState.coreCompletedFiles,
                         total: forgeDownloadState.coreTotalFiles,
+                        version: nil
+                    )
+                }
+            }
+            if selectedModLoader.lowercased() == "neoforge" {
+                FormSection {
+                    DownloadProgressRow(
+                        title: "neoforge.loader.title".localized(),
+                        progress: neoForgeDownloadState.coreProgress,
+                        currentFile: neoForgeDownloadState.currentCoreFile,
+                        completed: neoForgeDownloadState.coreCompletedFiles,
+                        total: neoForgeDownloadState.coreTotalFiles,
                         version: nil
                     )
                 }
@@ -370,7 +397,9 @@ struct GameFormView: View {
         await MainActor.run {
             self.availableModLoaders = loaders
             if !loaders.contains(self.selectedModLoader) {
-                self.selectedModLoader = loaders.first ?? "vanilla"
+                if self.selectedModLoader != loaders.first {
+                    self.selectedModLoader = loaders.first ?? "vanilla"
+                }
             }
             isLoadingLoaders = false
         }
@@ -397,8 +426,11 @@ struct GameFormView: View {
             Task { @MainActor in
                 do {
                     let data = try Data(contentsOf: url)
+                    let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".png")
+                    try data.write(to: tempURL)
+                    pendingIconURL = tempURL
                     pendingIconData = data
-                    iconImage = nil // 让 iconContainer 走 AsyncImage 预览
+                    iconImage = nil
                 } catch {
                     handleNonCriticalError(error, message: "error.image.read.failed".localized())
                 }
@@ -425,8 +457,11 @@ struct GameFormView: View {
 
                 if let data = data {
                     DispatchQueue.main.async {
+                        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".png")
+                        try? data.write(to: tempURL)
+                        pendingIconURL = tempURL
                         pendingIconData = data
-                        iconImage = nil // 让预览刷新
+                        iconImage = nil
                     }
                 }
             }
@@ -436,10 +471,6 @@ struct GameFormView: View {
         return false
     }
 
-    // setIconImage(from:) 只保留空实现或移除
-    private func setIconImage(from data: Data) {
-        // 已废弃，逻辑合并到 handleImagePickerResult/saveGame
-    }
 
     // MARK: - Game Save Methods
     private func saveGame() async {
@@ -497,6 +528,8 @@ struct GameFormView: View {
                     handleNonCriticalError(error, message: "error.fabric.profile.fetch.failed".localized())
                 } else if selectedModLoader.lowercased().contains("forge") {
                     handleNonCriticalError(error, message: "error.forge.profile.fetch.failed".localized())
+                } else if selectedModLoader.lowercased().contains("neoforge") {
+                    handleNonCriticalError(error, message: "error.neoforge.profile.fetch.failed".localized())
                 } else {
                     handleNonCriticalError(error, message: "error.modloader.profile.fetch.failed".localized())
                 }
@@ -506,7 +539,16 @@ struct GameFormView: View {
             let fileManager = try await setupFileManager(manifest: downloadedManifest, modLoader: gameInfo.modLoader)
             try await startDownloadProcess(fileManager: fileManager, manifest: downloadedManifest)
             // 传递 modLoaderResult 给 finalizeGameInfo
-            gameInfo = await finalizeGameInfo(gameInfo: gameInfo, manifest: downloadedManifest, fabricResult: selectedModLoader.lowercased().contains("fabric") ? modLoaderResult : nil, forgeResult: selectedModLoader.lowercased().contains("forge") ? modLoaderResult : nil)
+            gameInfo = await finalizeGameInfo(
+                gameInfo: gameInfo,
+                manifest: downloadedManifest,
+                fabricResult: selectedModLoader.lowercased() == "fabric"
+                    ? modLoaderResult : nil,
+                forgeResult: selectedModLoader.lowercased() == "forge"
+                    ? modLoaderResult : nil,
+                neoForgeResult: selectedModLoader.lowercased() == "neoforge"
+                    ? modLoaderResult : nil
+            )
             gameRepository.addGame(gameInfo)
             NotificationManager.send(
                 title: "notification.download.complete.title".localized(),
@@ -562,6 +604,8 @@ struct GameFormView: View {
             handler = FabricLoaderService.self
         case "forge":
             handler = ForgeLoaderService.self
+        case "neoforge":
+            handler = NeoForgeLoaderService.self
         default:
             handler = nil
         }
@@ -585,6 +629,8 @@ struct GameFormView: View {
                         fabricDownloadState.updateProgress(fileName: fileName, completed: completed, total: total, type: .core)
                     } else if loaderType == "forge" {
                         forgeDownloadState.updateProgress(fileName: fileName, completed: completed, total: total, type: .core)
+                    } else if loaderType == "neoforge" {
+                        neoForgeDownloadState.updateProgress(fileName: fileName, completed: completed, total: total, type: .core)
                     }
                 }
             }
@@ -595,7 +641,8 @@ struct GameFormView: View {
         gameInfo: GameVersionInfo,
         manifest: MinecraftVersionManifest,
         fabricResult: (loaderVersion: String, classpath: String, mainClass: String)? = nil,
-        forgeResult: (loaderVersion: String, classpath: String, mainClass: String)? = nil
+        forgeResult: (loaderVersion: String, classpath: String, mainClass: String)? = nil,
+        neoForgeResult: (loaderVersion: String, classpath: String, mainClass: String)? = nil
     ) async -> GameVersionInfo {
         var updatedGameInfo = gameInfo
         updatedGameInfo.assetIndex = manifest.assetIndex.id
@@ -614,6 +661,19 @@ struct GameFormView: View {
                 // 自动补充 --launchTarget forge_client
                 var gameArgs: [String] = []
                 if let forgeLoader = try? await ForgeLoaderService.fetchLatestForgeProfile(for: selectedGameVersion),
+                   let args = forgeLoader.arguments?.game {
+                    gameArgs = args
+                }
+                updatedGameInfo.gameArguments = gameArgs
+            }
+        case "neoforge":
+            if let result = neoForgeResult {
+                updatedGameInfo.modVersion = result.loaderVersion
+                updatedGameInfo.modJvm = result.classpath
+                updatedGameInfo.mainClass = result.mainClass
+                // 自动补充 
+                var gameArgs: [String] = []
+                if let forgeLoader = try? await NeoForgeLoaderService.fetchLatestNeoForgeProfile(for: selectedGameVersion),
                    let args = forgeLoader.arguments?.game {
                     gameArgs = args
                 }

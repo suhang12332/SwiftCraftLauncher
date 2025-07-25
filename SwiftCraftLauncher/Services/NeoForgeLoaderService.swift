@@ -7,7 +7,9 @@ struct BMCLNeoForgeVersion: Codable {
     let version: String
 }
 
-class NeoForgeService {
+
+
+class NeoForgeLoaderService {
     enum NeoForgeError: Error, LocalizedError {
         case networkError(String)
         case invalidResponse
@@ -33,7 +35,7 @@ class NeoForgeService {
     /// 获取最新的可用 NeoForge 版本
     static func fetchLatestNeoForgeVersion(for minecraftVersion: String) async throws -> String {
         let versions = try await fetchAllNeoForgeVersions(for: minecraftVersion)
-        guard let latest = versions.last else {
+        guard let latest = versions.first else {
             throw NeoForgeError.noMatchingVersion
         }
         return latest
@@ -62,15 +64,55 @@ class NeoForgeService {
     /// 获取最新的 NeoForge profile（version.json）
     static func fetchLatestNeoForgeProfile(for minecraftVersion: String) async throws -> ForgeLoader {
         let neoForgeVersion = try await fetchLatestNeoForgeVersion(for: minecraftVersion)
-        // 可加缓存
-        let versionJsonURL = URL(string: "https://github.com/neoforged/neoforge-client/releases/download/")!
+        // 1. 查全局缓存
+        if let cached = AppCacheManager.shared.get(namespace: "neoforge", key: neoForgeVersion, as: ForgeLoader.self) {
+            return cached
+        }
+        let versionJsonURL = URLConfig.API.NeoForge.gitReleasesBase
             .appendingPathComponent(neoForgeVersion)
             .appendingPathComponent("version.json")
-        let (data, response) = try await URLSession.shared.data(from: versionJsonURL)
+        var finalURLString = versionJsonURL.absoluteString
+        let proxy = GameSettingsManager.shared.gitProxyURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !proxy.isEmpty {
+            finalURLString = proxy + "/" + versionJsonURL.absoluteString
+        }
+        let (data, response) = try await URLSession.shared.data(from: URL(string: finalURLString)!)
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw NeoForgeError.invalidResponse
         }
-        return try JSONDecoder().decode(ForgeLoader.self, from: data)
+        
+        
+        
+        var loader = try JSONDecoder().decode(ForgeLoader.self, from: data)
+//        let targetName = "net.neoforged:neoforge:\(neoForgeVersion):client"
+//                let targetURL = URLConfig.API.NeoForge.gitReleasesBase
+//                    .appendingPathComponent(neoForgeVersion)
+//                    .appendingPathComponent("neoforged-\(neoForgeVersion)-client.jar").absoluteString
+//                for i in 0..<loader.libraries.count {
+//                    if loader.libraries[i].name == targetName {
+//                        loader.libraries[i].downloads.artifact.url = targetURL
+//                    }
+//                }
+        // 补全universal
+        let basePath = "net/neoforged/neoforge/\(neoForgeVersion)"
+        let jarName = "neoforge-\(neoForgeVersion)-client.jar"
+        let mavenUrl = URLConfig.API.NeoForge.gitReleasesBase
+            .appendingPathComponent(neoForgeVersion)
+            .appendingPathComponent("neoforge-\(neoForgeVersion)-client.jar").absoluteString
+        loader.libraries.append(ForgeLibrary(
+            name: "net.neoforged:neoforge:\(neoForgeVersion):client",
+            downloads: ForgeLibraryDownloads(
+                artifact: ForgeLibraryArtifact(
+                    path: "\(basePath)/\(jarName)",
+                    url: mavenUrl,
+                    sha1: "",
+                    size: 0
+                )
+            )
+        ))
+        
+        AppCacheManager.shared.set(namespace: "neoforge", key: neoForgeVersion, value: loader)
+        return loader
     }
 
     /// 安装并准备 NeoForge，返回 (loaderVersion, classpath, mainClass)
@@ -91,4 +133,13 @@ class NeoForgeService {
         let loaderVersion = neoForgeProfile.id
         return (loaderVersion: loaderVersion, classpath: classpathString, mainClass: mainClass)
     }
-} 
+    static func setup(
+        for gameVersion: String,
+        gameInfo: GameVersionInfo,
+        onProgressUpdate: @escaping (String, Int, Int) -> Void
+    ) async throws -> (loaderVersion: String, classpath: String, mainClass: String) {
+        return try await setupNeoForge(for: gameVersion, gameInfo: gameInfo, onProgressUpdate: onProgressUpdate)
+    }
+}
+
+extension NeoForgeLoaderService: ModLoaderHandler {}

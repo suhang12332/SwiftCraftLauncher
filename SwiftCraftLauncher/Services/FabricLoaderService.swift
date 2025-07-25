@@ -1,13 +1,5 @@
 import Foundation
 
-protocol ModLoaderHandler {
-    static func setup(
-        for gameVersion: String,
-        gameInfo: GameVersionInfo,
-        onProgressUpdate: @escaping (String, Int, Int) -> Void
-    ) async throws -> (loaderVersion: String, classpath: String, mainClass: String)
-}
-
 enum FabricSetupError: LocalizedError {
     case loaderInfoNotFound
     case appSupportDirectoryNotFound

@@ -104,6 +104,7 @@ enum URLConfig {
 
         // NeoForge API
         enum NeoForge {
+            static let gitReleasesBase = URL(string: "https://github.com/suhang12332/neoforge-client/releases/download/")!
             static let mavenMetadata = URL(string: "https://maven.neoforged.net/net/neoforged/neoforge/maven-metadata.xml")!
             static let bmclListBase = URL(string: "https://bmclapi2.bangbang93.com/neoforge/list/")!
         }

@@ -48,7 +48,12 @@ class ForgeLoaderService {
         let versionJsonURL = URLConfig.API.Forge.gitReleasesBase
             .appendingPathComponent(forgeVersion)
             .appendingPathComponent("version.json")
-        let (data, response) = try await URLSession.shared.data(from: versionJsonURL)
+        var finalURLString = versionJsonURL.absoluteString
+        let proxy = GameSettingsManager.shared.gitProxyURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !proxy.isEmpty {
+            finalURLString = proxy + "/" + versionJsonURL.absoluteString
+        }
+        let (data, response) = try await URLSession.shared.data(from: URL(string: finalURLString)!)
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw ForgeLoaderError.invalidResponse
         }

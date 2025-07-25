@@ -122,10 +122,10 @@ struct GameInfoDetailView: View {
                             .cornerRadius(12)
                     case .failure:
                         Image("default_game_icon")
-                            .resizable()
-                            .interpolation(.none)
-                            .frame(width: 64, height: 64)
-                            .cornerRadius(12)
+                    .resizable()
+                    .interpolation(.none)
+                    .frame(width: 64, height: 64)
+                    .cornerRadius(12)
                     @unknown default:
                         EmptyView()
                     }

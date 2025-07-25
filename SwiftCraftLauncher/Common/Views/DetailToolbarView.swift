@@ -42,8 +42,11 @@ public struct DetailToolbarView: ToolbarContent {
             case .game:
                 if let game = currentGame {
                     if !gameType {
-                        if let iconURL = AppPaths.profileDirectory(gameName: game.gameName)?.appendingPathComponent(game.gameIcon),
-                           FileManager.default.fileExists(atPath: iconURL.path) {
+                        if let iconURL = AppPaths.profileDirectory(
+                            gameName: game.gameName
+                        )?.appendingPathComponent(game.gameIcon),
+                            FileManager.default.fileExists(atPath: iconURL.path)
+                        {
                             AsyncImage(url: iconURL) { phase in
                                 switch phase {
                                 case .empty:
@@ -94,10 +97,17 @@ public struct DetailToolbarView: ToolbarContent {
                         Label("play.fill".localized(), systemImage: "play.fill")
                     }
                     .disabled(game.isRunning)
-                    if let gameDir = AppPaths.profileDirectory(gameName: game.gameName) {
-                        Link(destination: gameDir) {
-                            Label("play.fill".localized(), systemImage: "folder")
+                    Button(action: {
+                        if let gameDir = AppPaths.profileDirectory(
+                            gameName: game.gameName
+                        ) {
+                            NSWorkspace.shared.selectFile(
+                                nil,
+                                inFileViewerRootedAtPath: gameDir.path
+                            )
                         }
+                    }) {
+                        Label("play.fill".localized(), systemImage: "folder")
                     }
                 }
             case .resource:

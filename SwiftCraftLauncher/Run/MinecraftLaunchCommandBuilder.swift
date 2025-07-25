@@ -112,7 +112,7 @@ struct MinecraftLaunchCommandBuilder {
             "--assetIndex", gameInfo.assetIndex,
             "--uuid", uuid,
             "--accessToken",
-            "--clientId",
+            "--clientId", "SCL",
             "--xuid",
             "--userType", "msa",
             "--versionType", "release"

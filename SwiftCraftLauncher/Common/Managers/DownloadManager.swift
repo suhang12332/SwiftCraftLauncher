@@ -75,15 +75,22 @@ class DownloadManager {
         guard let url = URL(string: finalURLString) else { throw URLError(.badURL) }
         let fileManager = FileManager.default
         try fileManager.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        
+        // 检查是否需要 SHA1 校验
+        let shouldCheckSha1 = (expectedSha1?.isEmpty == false)
+        
+        // 如果文件已存在
         if fileManager.fileExists(atPath: destinationURL.path) {
-            if let expectedSha1 = expectedSha1 {
+            if shouldCheckSha1, let expectedSha1 = expectedSha1 {
+                // 有 SHA1 时进行校验
                 let actualSha1 = try? calculateFileSHA1(at: destinationURL)
                 if actualSha1 == expectedSha1 {
                     Logger.shared.info("文件已存在且 SHA1 校验通过，跳过下载: \(destinationURL.path)")
                     return destinationURL
                 }
             } else {
-                Logger.shared.info("文件已存在，跳过下载: \(destinationURL.path)")
+                // 没有 SHA1 时直接跳过
+                Logger.shared.info("文件已存在且无需 SHA1 校验，跳过下载: \(destinationURL.path)")
                 return destinationURL
             }
         }
@@ -92,7 +99,6 @@ class DownloadManager {
         let retryCount = 3
         let retryDelay: TimeInterval = 2
         var lastError: Error?
-        
         for attempt in 0..<retryCount {
             do {
                 let (data, response) = try await URLSession.shared.data(from: url)
@@ -100,7 +106,7 @@ class DownloadManager {
                     throw URLError(.badServerResponse)
                 }
                 try data.write(to: destinationURL)
-                if let expectedSha1 = expectedSha1 {
+                if shouldCheckSha1, let expectedSha1 = expectedSha1 {
                     let actualSha1 = try calculateFileSHA1(at: destinationURL)
                     if actualSha1 != expectedSha1 {
                         try? fileManager.removeItem(at: destinationURL)
@@ -111,13 +117,13 @@ class DownloadManager {
             } catch {
                 lastError = error
                 if attempt < retryCount - 1 {
+                    Logger.shared.warning(url)
                     Logger.shared.warning("下载失败，\(retryDelay)秒后重试 (\(attempt + 1)/\(retryCount)): \(error.localizedDescription)")
                     try await Task.sleep(nanoseconds: UInt64(retryDelay * 1_000_000_000))
                     continue
                 }
             }
         }
-        
         throw lastError ?? URLError(.unknown)
     }
 

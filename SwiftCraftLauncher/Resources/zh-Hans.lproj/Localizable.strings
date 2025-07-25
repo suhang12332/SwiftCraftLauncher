@@ -238,6 +238,7 @@
 "error.no.current.player.log" = "无法保存游戏，因为没有选择当前玩家。";
 "error.forge.profile.fetch.failed" = "获取 Forge profile 失败";
 "error.fabric.profile.fetch.failed" = "获取 Fabric profile 失败";
+"error.neoforge.profile.fetch.failed" = "获取 Fabric profile 失败";
 "error.version.data.load.failed" = "加载版本数据失败";
 "error.forge.network.failed" = "网络请求失败：%@";
 "error.forge.invalid.response" = "响应格式错误";
@@ -270,6 +271,7 @@
 "game.form.version.placeholder" = "请选择游戏版本";
 
 "forge.loader.title" = "Forge 加载器";
+"neoforge.loader.title" = "NeoForge 加载器";
 
 "addplayer.title" = "创建离线账户";
 "addplayer.name.title" = "玩家名";
