@@ -74,7 +74,7 @@ struct ContentView: View {
 //                 skinName: playerListViewModel.currentPlayer?.avatarName
 //             ).frame(minWidth: 200, minHeight: 400)
 //         }
-        EmptyView()
+        Label("开发中...", systemImage: "figure.outdoor.soccer")
     }
     
     // MARK: - Resource Content View

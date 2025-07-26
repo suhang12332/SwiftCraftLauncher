@@ -26,15 +26,15 @@ public struct SettingsView: View {
             GeneralSettingsView()
                 .tabItem {
                     Label("settings.general.tab".localized(), systemImage: "gearshape")
-                }
+                }.frame(maxWidth: 500)
             PlayerSettingsView()
                 .tabItem {
                     Label("settings.player.tab".localized(), systemImage: "person.crop.circle")
-                }
+                }.frame(maxWidth: 500)
             GameSettingsView()
                 .tabItem {
                     Label("settings.game.tab".localized(), systemImage: "gamecontroller")
-                }
+                }.frame(maxWidth: 500)
         }
         .padding(.vertical,24)
         .frame(maxWidth: 840)
@@ -45,16 +45,5 @@ public struct SettingsView: View {
     SettingsView()
 } 
 
-public struct SettingRow<Content: View>: View {
-    let label: String
-    let content: () -> Content
-    
-    public var body: some View {
-        HStack {
-            Text(label.localized())
-            content()
-                .frame(maxWidth: 240).focusable(false)
-        }
-    }
-}
+
 

@@ -54,7 +54,7 @@
 "settings.git_proxy_url.label" = "Git 代理地址";
 "settings.launcher_working_directory" = "工作目錄";
 "settings.launcher_working_directory.reset" = "重置";
-"settings.launcher_working_directory.choose" = "選擇…";
+"settings.launcher_working_directory.choose" = "選擇";
 "settings.launcher_working_directory.placeholder" = "未自訂時使用系統預設路徑";
 // Settings - Titles and Placeholders
 "settings.general.title" = "通用";

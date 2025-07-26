@@ -63,7 +63,8 @@ struct GameVersionInfo: Codable, Identifiable, Hashable {
     var launchCommand: String
     
     /// 运行内存大小 (MB)
-    var runningMemorySize: Int
+    var xms: Int
+    var xmx: Int
     
 
     /// 游戏主类（Main Class）
@@ -111,7 +112,8 @@ struct GameVersionInfo: Codable, Identifiable, Hashable {
         javaPath: String = "",
         jvmArguments: String = "",
         launchCommand: String = "",
-        runningMemorySize: Int = 2048,
+        xms: Int = 2048,
+        xmx: Int = 2048,
     
         mainClass: String = "",
         gameArguments: [String] = []
@@ -132,7 +134,8 @@ struct GameVersionInfo: Codable, Identifiable, Hashable {
         self.javaPath = javaPath
         self.jvmArguments = jvmArguments
         self.launchCommand = launchCommand
-        self.runningMemorySize = runningMemorySize
+        self.xms = xms
+        self.xmx = xmx
         self.mainClass = mainClass
         self.gameArguments = gameArguments
     }

@@ -114,16 +114,17 @@ class GameRepository: ObservableObject {
     /// 更新运行内存大小
     /// - Parameters:
     ///   - id: 游戏 ID
-    ///   - memorySize: 新的内存大小（MB）
+    ///   - xms: 新的 xms 内存大小（MB）
+    ///   - xmx: 新的 xmx 内存大小（MB）
     /// - Returns: 是否更新成功
-    func updateMemorySize(id: String, memorySize: Int) -> Bool {
+    func updateMemorySize(id: String, xms: Int, xmx: Int) -> Bool {
         guard let index = games.firstIndex(where: { $0.id == id }) else {
             Logger.shared.warning("找不到要更新内存大小的游戏：\(id)")
             return false
         }
-        
         var game = games[index]
-        game.runningMemorySize = memorySize
+        game.xms = xms
+        game.xmx = xmx
         games[index] = game
         saveGames()
         return true

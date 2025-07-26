@@ -68,16 +68,16 @@
 "settings.general.tab" = "通用";
 "settings.player.tab" = "玩家";
 "settings.game.tab" = "游戏";
-"settings.minecraft_versions_url.label" = "Minecraft 版本资源地址";
+"settings.minecraft_versions_url.label" = "Minecraft版本地址";
 "settings.modrinth_api_url.label" = "Modrinth API 地址";
-"settings.default_java_path.label" = "默认 Java 路径";
+"settings.default_java_path.label" = "默认Java路径";
 "settings.default_memory_allocation.label" = "全局内存分配";
 "settings.concurrent_downloads.label" = "下载并发数";
 "settings.auto_download_dependencies.label" = "自动下载前置Mod（依赖）";
 "settings.git_proxy_url.label" = "Git 代理地址";
 "settings.launcher_working_directory" = "工作目录";
 "settings.launcher_working_directory.reset" = "重置";
-"settings.launcher_working_directory.choose" = "选择…";
+"settings.launcher_working_directory.choose" = "选择";
 "settings.launcher_working_directory.placeholder" = "未自定义时使用系统默认路径";
 // Settings - Titles and Placeholders
 "settings.general.title" = "通用";

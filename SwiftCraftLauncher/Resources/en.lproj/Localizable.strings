@@ -62,7 +62,7 @@
 "settings.git_proxy_url.label" = "Git Proxy URL";
 "settings.launcher_working_directory" = "Working Directory";
 "settings.launcher_working_directory.reset" = "Reset";
-"settings.launcher_working_directory.choose" = "Choose…";
+"settings.launcher_working_directory.choose" = "Choose";
 "settings.launcher_working_directory.placeholder" = "System default path will be used if not customized";
 
 // Settings - Titles and Placeholders

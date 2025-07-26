@@ -18,7 +18,8 @@ struct MinecraftLaunchCommand {
     
     /// 启动游戏进程
     private func launchGameProcess(command: String) async throws {
-        let javaPath = GameSettingsManager.shared.defaultJavaPath
+        // 优先使用游戏特定的Java路径，如果为空则使用全局设置
+        let javaPath = game.javaPath.isEmpty ? GameSettingsManager.shared.defaultJavaPath : game.javaPath
         Logger.shared.info("启动游戏进程: \(javaPath) \(command)")
         let scriptContent = """
         #!/bin/bash

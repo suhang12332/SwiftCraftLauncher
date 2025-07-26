@@ -9,10 +9,11 @@
 /* Begin PBXBuildFile section */
 		9023D91C2E313A67005A53F1 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 9023D91B2E313A67005A53F1 /* ZIPFoundation */; };
 		9023D91F2E313A9C005A53F1 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9023D91E2E313A9C005A53F1 /* MarkdownUI */; };
+		90D8D76B2E33FB75008296D1 /* Sliders in Frameworks */ = {isa = PBXBuildFile; productRef = 90D8D76A2E33FB75008296D1 /* Sliders */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		90D8D67A2E322905008296D1 /* SwiftCraftLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftCraftLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		90D8D76C2E34CB44008296D1 /* SwiftCraftLauncher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftCraftLauncher.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -28,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90D8D76B2E33FB75008296D1 /* Sliders in Frameworks */,
 				9023D91C2E313A67005A53F1 /* ZIPFoundation in Frameworks */,
 				9023D91F2E313A9C005A53F1 /* MarkdownUI in Frameworks */,
 			);
@@ -40,7 +42,7 @@
 			isa = PBXGroup;
 			children = (
 				9023D8332E3139B5005A53F1 /* SwiftCraftLauncher */,
-				90D8D67A2E322905008296D1 /* SwiftCraftLauncher.app */,
+				90D8D76C2E34CB44008296D1 /* SwiftCraftLauncher.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,9 +68,10 @@
 			packageProductDependencies = (
 				9023D91B2E313A67005A53F1 /* ZIPFoundation */,
 				9023D91E2E313A9C005A53F1 /* MarkdownUI */,
+				90D8D76A2E33FB75008296D1 /* Sliders */,
 			);
 			productName = SwiftCraftLauncher;
-			productReference = 90D8D67A2E322905008296D1 /* SwiftCraftLauncher.app */;
+			productReference = 90D8D76C2E34CB44008296D1 /* SwiftCraftLauncher.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -100,6 +103,7 @@
 			packageReferences = (
 				9023D91A2E313A67005A53F1 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				9023D91D2E313A9C005A53F1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				90D8D7692E33FB75008296D1 /* XCRemoteSwiftPackageReference "swiftui-sliders" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9023D8282E3139B5005A53F1;
@@ -186,6 +190,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -245,6 +250,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -348,6 +354,14 @@
 				minimumVersion = 2.4.1;
 			};
 		};
+		90D8D7692E33FB75008296D1 /* XCRemoteSwiftPackageReference "swiftui-sliders" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/spacenation/swiftui-sliders.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -360,6 +374,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9023D91D2E313A9C005A53F1 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		90D8D76A2E33FB75008296D1 /* Sliders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 90D8D7692E33FB75008296D1 /* XCRemoteSwiftPackageReference "swiftui-sliders" */;
+			productName = Sliders;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

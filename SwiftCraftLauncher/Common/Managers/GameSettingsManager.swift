@@ -33,5 +33,11 @@ class GameSettingsManager: ObservableObject {
     @AppStorage("gitProxyURL") public var gitProxyURL: String = "https://ghfast.top" {
         didSet { objectWillChange.send() }
     }
+    @AppStorage("globalXms") public var globalXms: Int = 512 {
+        didSet { objectWillChange.send() }
+    }
+    @AppStorage("globalXmx") public var globalXmx: Int = 4096 {
+        didSet { objectWillChange.send() }
+    }
     private init() {}
 }

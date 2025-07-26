@@ -80,7 +80,7 @@ struct GlobalResourceSheet: View {
                         VStack {
                             CommonSheetGameBody(compatibleGames: compatibleGames, selectedGame: $selectedGame)
                             if let game = selectedGame {
-                                Spacer().frame(minHeight: 20)
+                                SpacerView()
                                 VersionPickerForSheet(
                                     project: project,
                                     resourceType: resourceType,
@@ -184,7 +184,7 @@ private struct DependencySection: View {
         if state.isLoading {
             ProgressView().controlSize(.small)
         } else if !state.dependencies.isEmpty {
-            Spacer().frame(minHeight: 20)
+            SpacerView()
             VStack {
                 ForEach(state.dependencies, id: \ .id) { dep in
                     VStack(alignment: .leading) {

@@ -45,6 +45,7 @@ struct GameFormView: View {
     @State private var isGameNameDuplicate: Bool = false
     @State private var pendingIconData: Data? = nil
     @State private var pendingIconURL: URL? = nil
+    @State private var didInit = false
 
     // MARK: - Body
     var body: some View {
@@ -56,8 +57,11 @@ struct GameFormView: View {
         ) { result in
             handleImagePickerResult(result)
         }
-        .task {
-            await loadVersions()
+        .onAppear {
+            if !didInit {
+                didInit = true
+                Task { await loadVersions() }
+            }
         }
     }
 
@@ -399,12 +403,7 @@ struct GameFormView: View {
         let loaders = await CommonService.availableLoaders(for: version)
         await MainActor.run {
             self.availableModLoaders = loaders
-            // 只在 selectedModLoader 不在 loaders 里且 loaders 非空时才赋值，避免递归
-            if !loaders.contains(self.selectedModLoader), let first = loaders.first {
-                if self.selectedModLoader != first {
-                    self.selectedModLoader = first
-                }
-            }
+            // 不自动赋值 selectedModLoader，避免属性依赖循环。用户需手动选择。
             isLoadingLoaders = false
         }
     }
@@ -690,7 +689,7 @@ struct GameFormView: View {
                             $0
                                 .replacingOccurrences(of: "${version_name}", with: selectedGameVersion)
                                 .replacingOccurrences(of: "${classpath_separator}", with: ":")
-                                .replacingOccurrences(of: "${library_directory}", with: AppPaths.librariesDirectory!.absoluteString)
+                                .replacingOccurrences(of: "${library_directory}", with: AppPaths.librariesDirectory!.path)
                         }
                     }
                 }
@@ -700,8 +699,8 @@ struct GameFormView: View {
         }
         let username = playerListViewModel.currentPlayer?.name ?? "Player"
         let uuid = gameInfo.id
-        let launcherBrand = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "MLauncher"
-        let launcherVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+        let launcherBrand = AppConstants.appName
+        let launcherVersion = AppConstants.version
         updatedGameInfo.launchCommand = MinecraftLaunchCommandBuilder.build(
             manifest: manifest,
             gameInfo: updatedGameInfo,
@@ -748,3 +747,6 @@ struct GameFormView: View {
 }
 
 
+#Preview {
+    GameFormView()
+}

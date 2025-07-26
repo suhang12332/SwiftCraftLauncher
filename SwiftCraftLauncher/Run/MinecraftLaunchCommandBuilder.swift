@@ -17,12 +17,11 @@ struct MinecraftLaunchCommandBuilder {
               let versionsDir = AppPaths.versionsDirectory else {
             fatalError("AppPaths 路径获取失败")
         }
-        let quotedNativesDir = "\"\(nativesDir)\""
-        let quotedAssetsDir = "\"\(assetsDir)\""
-        let quotedGameDir = "\"\(gameDir)\""
+        let quotedGameDir = gameDir
+        let quotedAssetsDir = assetsDir
+        let quotedNativesDir = nativesDir
         let clientJarPath = versionsDir.appendingPathComponent(manifest.id).appendingPathComponent("\(manifest.id).jar").path
         
-        // 生成 Classpath，modJvm 优先生效，按 group/artifact 去重，合并后再筛选当前系统适用的库
         // 1. 构建 path -> rules 映射
         var pathToRules: [String: [Rule]?] = [:]
         for lib in manifest.libraries {
@@ -47,14 +46,25 @@ struct MinecraftLaunchCommandBuilder {
         }
         var seenKeys = Set<String>()
         var mergedJars: [String] = []
+        // 1. 先加 modClassPath
+        for jar in modClassPath {
+            if let key = extractGroupArtifact(from: jar) {
+                if !seenKeys.contains(key) {
+                    seenKeys.insert(key)
+                    mergedJars.append(jar)
+                }
+            } else {
+                mergedJars.append(jar)
+            }
+        }
+        // 2. 再加 manifestJarPaths
         for jar in manifestJarPaths {
             if let key = extractGroupArtifact(from: jar) {
-                seenKeys.insert(key)
-            }
-            mergedJars.append(jar)
-        }
-        for jar in modClassPath {
-            if let key = extractGroupArtifact(from: jar), !seenKeys.contains(key) {
+                if !seenKeys.contains(key) {
+                    seenKeys.insert(key)
+                    mergedJars.append(jar)
+                }
+            } else {
                 mergedJars.append(jar)
             }
         }
@@ -83,21 +93,25 @@ struct MinecraftLaunchCommandBuilder {
         let isFabricOrVanilla = gameInfo.modLoader.lowercased().contains("fabric") || gameInfo.modLoader.lowercased().contains("vanilla")
         let classpathList: [String]
         if isFabricOrVanilla {
-            classpathList = finalJars.map { "\"\($0)\"" } + ["\"\(clientJarPath)\""]
+            classpathList = finalJars.map { $0 } + [clientJarPath]
         } else {
-            classpathList = finalJars.map { "\"\($0)\"" }
+            classpathList = finalJars.map { $0 }
         }
         let classpathString = classpathList.joined(separator: ":")
         // JVM 参数
+        // 获取全局默认内存设置
+        let globalXms = GameSettingsManager.shared.globalXms
+        let globalXmx = GameSettingsManager.shared.globalXmx
+        let useGameMemory = gameInfo.xms > 0 && gameInfo.xmx > 0
         var jvmArgs: [String] = [
             "-Djava.library.path=\(quotedNativesDir)",
             "-Djna.tmpdir=\(quotedNativesDir)",
             "-Dorg.lwjgl.system.SharedLibraryExtractPath=\(quotedNativesDir)",
             "-Dio.netty.native.workdir=\(quotedNativesDir)",
-            "-Dminecraft.launcher.brand=\(launcherBrand)",
+            "-Dminecraft.launcher.brand=SCL",
             "-Dminecraft.launcher.version=\(launcherVersion)",
-            "-Xms\(gameInfo.runningMemorySize)M",
-            "-Xmx\(gameInfo.runningMemorySize)M",
+            "-Xms\((useGameMemory ? gameInfo.xms : globalXms))M",
+            "-Xmx\((useGameMemory ? gameInfo.xmx : globalXmx))M",
             "-XstartOnFirstThread",
             "-cp", classpathString
         ]
@@ -114,9 +128,9 @@ struct MinecraftLaunchCommandBuilder {
             "--assetsDir", quotedAssetsDir,
             "--assetIndex", gameInfo.assetIndex,
             "--uuid", uuid,
-            "--accessToken", "SCL-\(AppConstants.appVersion)",
-            "--clientId",
-            "--xuid", "0",
+            "--accessToken", uuid, // 用 uuid 作为 accessToken 的默认值，保证不为空
+            "--clientId", "SCL-\(launcherVersion)", // 用启动器版本作为 clientId
+            "--xuid", "0", // 伪造 xuid，保证不为空
             "--userType", "msa",
             "--versionType", "release"
         ]
@@ -124,7 +138,15 @@ struct MinecraftLaunchCommandBuilder {
         if !gameInfo.gameArguments.isEmpty {
             mcArgs.append(contentsOf: gameInfo.gameArguments)
         }
-        return (jvmArgs + mcArgs).joined(separator: " ")
+        
+        // 拼接前处理空格，所有包含空格的参数加英文双引号
+        let safeJvmArgs = jvmArgs.map { arg in
+            arg.contains(" ") ? "\"\(arg)\"" : arg
+        }
+        let safeMcArgs = mcArgs.map { arg in
+            arg.contains(" ") ? "\"\(arg)\"" : arg
+        }
+        return (safeJvmArgs + safeMcArgs).joined(separator: " ")
     }
 
     /// 判断库是否适用当前平台

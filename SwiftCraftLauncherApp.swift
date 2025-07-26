@@ -7,7 +7,7 @@
 import SwiftUI
 
 @main
-struct MLauncherApp: App {
+struct SwiftCraftLauncherApp: App {
     // MARK: - StateObjects
     @StateObject private var playerListViewModel = PlayerListViewModel()
     @StateObject private var gameRepository = GameRepository()

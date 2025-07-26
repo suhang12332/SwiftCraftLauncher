@@ -68,6 +68,7 @@ class ForgeLoaderService {
                 loader.libraries[i].downloads.artifact.url = targetURL
             }
         }
+        loader.version = forgeVersion
         AppCacheManager.shared.set(namespace: "forge", key: forgeVersion, value: loader)
         return loader
     }
@@ -114,7 +115,7 @@ class ForgeLoaderService {
         try await forgeManager.downloadForgeJars(libraries: forgeProfile.libraries)
         let classpathString = CommonService.generateClasspath(from: forgeProfile, librariesDir: librariesDirectory)
         let mainClass = forgeProfile.mainClass
-        let loaderVersion = forgeProfile.id
+        let loaderVersion = forgeProfile.version!
         return (loaderVersion: loaderVersion, classpath: classpathString, mainClass: mainClass)
     }
 
